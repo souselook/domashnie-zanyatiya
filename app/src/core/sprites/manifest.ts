@@ -56,6 +56,8 @@ export const SPRITE_MANIFEST: SpriteManifest = {
       'luntic-arm-wave': { props: [], defaults: {} },
       'luntic-arm-reach': { props: [], defaults: {} },
       'luntic-arm-up': { props: [], defaults: {} },
+      // additive (Этап 4.5): рука в покое «rest» — использует рисунки arm-*-down из листа.
+      'luntic-arm-rest': { props: [], defaults: {} },
     },
   },
 

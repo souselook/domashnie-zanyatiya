@@ -51,7 +51,7 @@ describe('SPRITE_MANIFEST', () => {
 
   it('luntic содержит ровно 26 символов (контракт: заявлено 25, по списку ID — 26)', () => {
     const syms = Object.keys(SPRITE_MANIFEST['character/luntic'].symbols);
-    expect(syms).toHaveLength(26);
+    expect(syms).toHaveLength(27);
     ['luntic-body', 'luntic-head', 'luntic-arm-up', 'luntic-eye-blink', 'luntic-mouth-sad']
       .forEach((id) => expect(syms).toContain(id));
   });
