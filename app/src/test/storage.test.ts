@@ -50,6 +50,7 @@ describe('настройки', () => {
   it('сохраняет и мержит с дефолтами', () => {
     saveSettings({ ...DEFAULT_SETTINGS, fontScale: 'large' });
     expect(loadSettings().fontScale).toBe('large');
-    expect(loadSettings().ttsEnabled).toBe(true);
+    // TTS в v1 отключён (решение 5): дефолт false даже после сохранения настроек.
+    expect(loadSettings().ttsEnabled).toBe(false);
   });
 });

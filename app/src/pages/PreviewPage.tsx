@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { loadLesson, loadManifest, loadRegistry } from '../core/loader';
+import { resolveLesson } from '../core/moduleSource';
 import type { Lesson, Manifest } from '../core/schema';
 import TaskRenderer from '../components/TaskRenderer';
 import ErrorPanel from '../components/ErrorPanel';
@@ -12,23 +12,19 @@ export default function PreviewPage() {
   const lessonFile = decodeURIComponent(file);
   const [manifest, setManifest] = useState<Manifest | null>(null);
   const [lesson, setLesson] = useState<Lesson | null>(null);
+  const [lessonAssets, setLessonAssets] = useState<Record<string, string>>({}); // dataURL из zip (IndexedDB)
   const [error, setError] = useState<unknown>(null);
   const [onlyId, setOnlyId] = useState<string | null>(null); // «только этот шаг»
 
   useEffect(() => {
     let alive = true;
     (async () => {
-      const reg = await loadRegistry();
-      if (!reg.ok) { if (alive) setError(reg.error); return; }
-      const entry = reg.data.modules.find((m) => m.id === moduleId && m.enabled);
-      if (!entry) { if (alive) setError({ code: 'NOT_FOUND', message: 'Модуль не найден в реестре.' }); return; }
-      const man = await loadManifest(entry);
-      if (!man.ok) { if (alive) setError(man.error); return; }
-      const les = await loadLesson(man.data, lessonFile);
+      const r = await resolveLesson(moduleId, lessonFile);
       if (!alive) return;
-      if (!les.ok) { setError(les.error); return; }
-      setManifest(man.data);
-      setLesson(les.data);
+      if (!r.ok) { setError(r.error); return; }
+      setManifest(r.data.rec.manifest);
+      setLesson(r.data.lesson);
+      setLessonAssets(r.data.rec.assets);
     })();
     return () => { alive = false; };
   }, [moduleId, lessonFile]);
@@ -76,7 +72,7 @@ export default function PreviewPage() {
               <span className="ml-auto">{step.type}</span>
             </div>
             <div className="parent-script mb-4">🗣 {step.parentScript}</div>
-            <TaskRenderer step={step} moduleId={manifest.id} readOnly />
+            <TaskRenderer step={step} moduleId={manifest.id} readOnly resolveAssetSrc={(rel) => lessonAssets[rel]} />
           </li>
         ))}
       </ol>

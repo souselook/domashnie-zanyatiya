@@ -1,18 +1,22 @@
-// Хранилище прогресса и настроек (localStorage, см. STAGE1_SPEC.md §7).
-// Интерфейс намеренно асинхронный-подобный (простые функции), но изолирован —
-// при переходе на IndexedDB меняется только эта реализация.
+// Хранилище прогресса и настроек.
+// Источник истины — IndexedDB (src/core/db.ts); localStorage используется только для
+// кэша последнего чтения (синхронные геттеры в рендере) и флага seed (hl.seeded.v1).
 
 import type { Lesson } from './schema';
+import {
+  putProgress, getAllProgress, clearProgress as dbClearProgress,
+  getSettings, putSettings,
+} from './db';
 
 export interface Settings {
-  ttsEnabled: boolean;
+  ttsEnabled: boolean;     // v1: переключатель disabled, «будет в следующей версии»
   speechRate: number;      // 0.5–1.5
   fontScale: 'normal' | 'large' | 'xlarge';
   timerEnabled: boolean;   // мягкое напоминание по durationSec
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  ttsEnabled: true,
+  ttsEnabled: false,
   speechRate: 0.9,
   fontScale: 'normal',
   timerEnabled: true,
@@ -34,11 +38,12 @@ export interface LessonProgress {
   steps: Record<string, StepRecord>;
 }
 
-const SETTINGS_KEY = 'hl.settings.v1';
-const PROGRESS_KEY = 'hl.progress.v1';
+const SETTINGS_KEY = 'hl.settings.v1';   // зеркало последней записи (для dev-отладки)
+const PROGRESS_KEY = 'hl.progress.v1';  // зеркало последней записи
 
 /* ── настройки ───────────────────────────────────────────────── */
 
+/** Синхронное чтение зеркала (localStorage). Актуальные данные пишет async-версия. */
 export function loadSettings(): Settings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
@@ -51,6 +56,24 @@ export function loadSettings(): Settings {
 
 export function saveSettings(s: Settings): void {
   try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch { /* quota/приватный режим */ }
+  void putSettings(s); // основной источник — IndexedDB
+}
+
+/** Асинхронная загрузка настроек из IndexedDB с откатом на localStorage-зеркало. */
+export async function loadSettingsAsync(): Promise<Settings> {
+  const fromDb = await getSettings();
+  if (fromDb) {
+    const merged = { ...DEFAULT_SETTINGS, ...fromDb };
+    saveSettingsMirrorOnly(merged);
+    return merged;
+  }
+  const mirror = loadSettings();
+  void putSettings(mirror); // миграция при первом запуске поверх старой версии
+  return mirror;
+}
+
+function saveSettingsMirrorOnly(s: Settings): void {
+  try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch { /* ignore */ }
 }
 
 /* ── прогресс ────────────────────────────────────────────────── */
@@ -70,8 +93,25 @@ function readAll(): ProgressMap {
   }
 }
 
+function writeAll(all: ProgressMap): void {
+  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(all)); } catch { /* ignore */ }
+}
+
+/** Загрузить весь прогресс из IndexedDB в синхронный кэш (вызывается при старте app). */
+export async function hydrateProgressCache(): Promise<void> {
+  const all = await getAllProgress();
+  writeAll(all);
+}
+
 export function loadLessonProgress(moduleId: string, lessonId: string): LessonProgress | undefined {
   return readAll()[progressKey(moduleId, lessonId)];
+}
+
+async function persist(key: string, value: LessonProgress): Promise<void> {
+  const all = readAll();
+  all[key] = value;
+  writeAll(all);
+  await putProgress(key, value);
 }
 
 export function upsertStep(
@@ -86,8 +126,7 @@ export function upsertStep(
   // lastStepId обновляем только если у шага ещё нет записи — иначе заметки/подтверждения
   // текущего шага будут «перемотки» назад при каждом сохранении.
   if (!all[key]) cur.lastStepId = stepId;
-  all[key] = cur;
-  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(all)); } catch { /* ignore */ }
+  void persist(key, cur);
   return cur;
 }
 
@@ -98,8 +137,7 @@ export function setLastStep(moduleId: string, lessonId: string, stepId: string):
     lessonId, moduleId, startedAt: new Date().toISOString(), steps: {},
   };
   cur.lastStepId = stepId;
-  all[key] = cur;
-  try { localStorage.setItem(PROGRESS_KEY, JSON.stringify(all)); } catch { /* ignore */ }
+  void persist(key, cur);
 }
 
 export function isLessonCompleted(lesson: Lesson, p?: LessonProgress): boolean {
@@ -116,6 +154,8 @@ export function allProgress(): LessonProgress[] {
   return Object.values(readAll());
 }
 
-export function resetAllProgress(): void {
+export async function resetAllProgress(): Promise<void> {
+  writeAll({});
   try { localStorage.removeItem(PROGRESS_KEY); } catch { /* ignore */ }
+  await dbClearProgress();
 }

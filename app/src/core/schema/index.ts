@@ -1,4 +1,8 @@
 import { z } from 'zod';
+import { sceneSchema } from './scene';
+
+export { sceneSchema, spriteRefSchema } from './scene';
+export type { Scene, SceneLayer, SceneCharacter } from './scene';
 
 /* ── Общие примитивы ─────────────────────────────────────────── */
 
@@ -45,6 +49,9 @@ export const manifestSchema = z.object({
   ageRange: ageRangeSchema,
   discipline: z.enum(['demo', 'reading', 'math', 'logic', 'world', 'speech', 'art', 'other']),
   cover: relPath.optional(),
+  // Новое (решение 4 сверх спеки): плоский список спрайт-ссылок, нужных модулю.
+  requiredSprites: z.array(z.string()).optional(),
+  usesOwnAssets: z.boolean().optional(),
   lessons: z.array(z.object({
     file: relPath,
     order: z.number().int().min(1),
@@ -58,6 +65,18 @@ const baseStep = {
   parentScript: z.string().min(1),
   mode: z.enum(['parent', 'child']).default('parent'),
   durationSec: z.number().int().positive().optional(),
+  // v2-задел: озвучивание зарезервировано, в v1 не используется.
+  voice: z.enum(['ru-female', 'ru-male', 'none']).optional(),
+};
+
+/**
+ * Поле визуала шага. В новой форме — `scene` (декларативная сцена из спрайтов).
+ * Легаси-форма `asset` (одиночный файл) принята как опциональная и конвертируется
+ * ядром через legacyAssetToScene() — см. src/core/scene/legacy.ts.
+ */
+const visualFields = {
+  scene: sceneSchema.optional(),
+  asset: relPath.optional(), // УСТАРЕЛО, поддерживается обратно совместимо
 };
 
 const optionBase = {
@@ -65,10 +84,13 @@ const optionBase = {
   label: z.string().min(1),
   image: relPath.optional(),
   alt: z.string().min(1).optional(),
+  scene: sceneSchema.optional(), // новая форма вместо image
+  asset: relPath.optional(),     // легаси-форма
 };
 
 export const pictureChoiceSchema = z.object({
   ...baseStep,
+  ...visualFields,
   type: z.literal('picture-choice'),
   prompt: z.string().min(1),
   options: z.array(z.object({
@@ -79,6 +101,7 @@ export const pictureChoiceSchema = z.object({
 
 export const matchSchema = z.object({
   ...baseStep,
+  ...visualFields,
   type: z.literal('match'),
   prompt: z.string().min(1),
   pairs: z.array(z.object({
@@ -89,18 +112,23 @@ export const matchSchema = z.object({
 
 export const countSchema = z.object({
   ...baseStep,
+  ...visualFields,
   type: z.literal('count'),
   prompt: z.string().min(1),
   items: z.object({
-    kind: z.enum(['circle', 'square', 'triangle', 'star']),
+    kind: z.enum(['circle', 'square', 'triangle', 'star']).optional(),
     color: z.string().optional(),
     count: z.number().int().min(1).max(10),
+    // новая форма: спрайт предметов + repeat (предпочтительна)
+    sprite: z.string().optional(),
+    props: z.record(z.string()).optional(),
   }),
   answer: z.number().int().min(1).max(10),
 });
 
 export const featureChoiceSchema = z.object({
   ...baseStep,
+  ...visualFields,
   type: z.literal('feature-choice'),
   prompt: z.string().min(1),
   feature: z.string().min(1),
@@ -112,28 +140,36 @@ export const featureChoiceSchema = z.object({
 
 export const tracePointSchema = z.object({
   ...baseStep,
+  ...visualFields,
   type: z.literal('trace-point'),
   prompt: z.string().min(1),
-  image: relPath,
-  alt: z.string().min(1),
+  image: relPath.optional(),
+  alt: z.string().min(1).default(''),
   offlineAction: z.string().min(1),
 });
 
 export const offlineTaskSchema = z.object({
   ...baseStep,
+  ...visualFields,
   type: z.literal('offline-task'),
+  // prompt (optional) — короткий заголовок шага; если не задан, рендерер использует parentScript или sid
+  prompt: z.string().min(1).max(120).optional(),
   actionText: z.string().min(1),
   checklist: z.array(z.string().min(1)).max(5).optional(),
 });
 
 export const reflectionSchema = z.object({
   ...baseStep,
+  ...visualFields,
   type: z.literal('reflection'),
+  // prompt (optional) — короткий заголовок шага; если не задан, рендерер использует parentScript или sid
+  prompt: z.string().min(1).max(120).optional(),
   questions: z.array(z.string().min(1)).min(1).max(3),
 });
 
 export const instructionSchema = z.object({
   ...baseStep,
+  ...visualFields,
   type: z.literal('instruction'),
 });
 
@@ -170,10 +206,10 @@ export const lessonSchema = z.object({
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Дублируются id шагов' });
   }
   const refl = lesson.steps.filter((s) => s.type === 'reflection');
-  if (refl.length > 1) {
-    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Рефлексия должна быть не более одной' });
-  }
-  if (refl.length === 1 && lesson.steps[lesson.steps.length - 1]?.type !== 'reflection') {
+  // Усилено решением сверх спеки: ровно одна reflection, всегда последняя.
+  if (refl.length !== 1) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'В уроке должна быть ровно одна рефлексия' });
+  } else if (lesson.steps[lesson.steps.length - 1]?.type !== 'reflection') {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Рефлексия должна быть последним шагом' });
   }
 });

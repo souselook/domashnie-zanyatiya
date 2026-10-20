@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { allProgress, completedStepsCount, type LessonProgress } from '../core/storage';
-import { loadManifest, loadRegistry, sortedLessonFiles } from '../core/loader';
-import type { Manifest } from '../core/schema';
+import { listStoredModules, lessonFromRecord } from '../core/loader';
+import type { StoredModule } from '../core/db';
+import type { Lesson } from '../core/schema';
 
-interface Row { manifest: Manifest; p: LessonProgress }
+interface Row { rec: StoredModule; lesson: Lesson | null; p: LessonProgress }
 
 /** Экран прогресса: наблюдения и чек-листы, без оценок и баллов. */
 export default function ProgressPage() {
@@ -14,23 +15,28 @@ export default function ProgressPage() {
   useEffect(() => {
     let alive = true;
     (async () => {
-      const reg = await loadRegistry();
-      if (!reg.ok) { setLoading(false); return; }
-      const results = await Promise.all(
-        reg.data.modules.filter((m) => m.enabled).map(async (entry) => {
-          const man = await loadManifest(entry);
-          return man.ok ? man.data : null;
-        }),
-      );
+      // IndexedDB = источник истины: прогресс сопоставляем с установленными модулями
+      const mods = await listStoredModules();
       if (!alive) return;
-      const manifests = results.filter(Boolean) as Manifest[];
-      const byId = new Map(manifests.map((m) => [m.id, m]));
+      const byId = new Map(mods.map((m) => [m.id, m]));
       const out: Row[] = [];
       for (const p of allProgress()) {
-        const manifest = byId.get(p.moduleId);
-        if (manifest) out.push({ manifest, p });
+        const rec = byId.get(p.moduleId);
+        if (!rec) continue; // модуль удалён — запись без родителя не показываем
+        // урок ищем по id среди загруженных JSON
+        let lesson: Lesson | null = null;
+        for (const file of Object.keys(rec.lessons)) {
+          if (rec.lessons[file].id === p.lessonId) { lesson = rec.lessons[file]; break; }
+        }
+        if (!lesson) {
+          const guess = `lessons/${p.lessonId}.json`;
+          const r = lessonFromRecord(rec, guess);
+          if (r.ok) lesson = r.data;
+        }
+        out.push({ rec, lesson, p });
       }
-      setRows(out.sort((a, b) => (b.p.lastStepId ? 1 : 0) - (a.p.lastStepId ? 1 : 0)));
+      out.sort((a, b) => (b.p.startedAt ?? '').localeCompare(a.p.startedAt ?? ''));
+      setRows(out);
       setLoading(false);
     })();
     return () => { alive = false; };
@@ -54,13 +60,13 @@ export default function ProgressPage() {
       <h1 className="text-2xl font-extrabold">Прогресс</h1>
       <p className="text-sm opacity-70">Это наблюдения, а не оценки. Сравнивайте ребёнка только с ним самим вчерашним — или не сравнивайте вовсе.</p>
       <ul className="space-y-3 list-none p-0">
-        {rows.map(({ manifest, p }) => (
+        {rows.map(({ rec, lesson, p }) => (
           <li key={`${p.moduleId}/${p.lessonId}`} className="card">
             <div className="flex items-center gap-3 flex-wrap">
-              <h2 className="font-extrabold">{p.lessonId}</h2>
-              <span className="text-xs bg-sand rounded-full px-2 py-1">{manifest.title}</span>
+              <h2 className="font-extrabold">{lesson?.title ?? p.lessonId}</h2>
+              <span className="text-xs bg-sand rounded-full px-2 py-1">{rec.manifest.title}</span>
               <span className="ml-auto text-sm opacity-70">
-                шагов пройдено: {completedStepsCount(p)} / {manifest.lessons.find((l) => l.file.includes(p.lessonId)) ? '—' : '—'}
+                шагов пройдено: {completedStepsCount(p)}{lesson ? ` / ${lesson.steps.length}` : ''}
               </span>
             </div>
             <p className="text-xs opacity-60 mt-1">
@@ -70,14 +76,17 @@ export default function ProgressPage() {
               <ul className="mt-3 space-y-2 list-none p-0">
                 {Object.entries(p.steps).filter(([, r]) => r.notes).map(([sid, r]) => (
                   <li key={sid} className="bg-sand/30 rounded-xl p-3 text-sm">
-                    <span className="opacity-60">{sid}: </span>{r.notes}
+                    <span className="opacity-60">{lesson?.steps.find((st) => st.id === sid)?.parentScript ?? sid}: </span>{r.notes}
                   </li>
                 ))}
               </ul>
             )}
+            {Object.entries(p.steps).filter(([, r]) => r.offlineConfirmed).length > 0 && (
+              <p className="mt-2 text-sm">✅ Отмечены выполненные офлайн-задания: {Object.entries(p.steps).filter(([, r]) => r.offlineConfirmed).length}</p>
+            )}
             <div className="mt-3 text-sm">
               <Link className="underline opacity-70"
-                   to={`/lesson/${manifest.id}/${encodeURIComponent(sortedLessonFiles(manifest).find((f) => f.includes(p.lessonId)) ?? '')}`}>
+                   to={`/lesson/${rec.id}/${encodeURIComponent(lesson ? Object.keys(rec.lessons).find((f) => rec.lessons[f].id === p.lessonId) ?? '' : p.lessonId + '.json')}`}>
                 Продолжить
               </Link>
             </div>

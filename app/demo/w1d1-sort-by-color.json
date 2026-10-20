@@ -1,0 +1,65 @@
+{
+  "lessonVersion": 1,
+  "id": "w1d1-sort-by-color",
+  "moduleId": "legacy-demo-module",
+  "title": "Сортируем по цвету (легаси-фикстура)",
+  "estimatedMinutes": 5,
+  "tips": ["Это технический урок для проверки legacyAssetToScene. Методики здесь нет."],
+  "materials": [
+    { "name": "Кубики или карточки двух цветов", "icon": "blocks" },
+    { "name": "Две мисочки (или листа А4, сложенные пополам)", "icon": "paper" }
+  ],
+  "steps": [
+    {
+      "id": "s1",
+      "type": "instruction",
+      "mode": "parent",
+      "asset": "assets/luntic-hello.svg",
+      "parentScript": "Поздоровайся с ребёнком вместе с картинкой. Скажи: «Сегодня мы будем раскладывать предметы по цветам»."
+    },
+    {
+      "id": "s2",
+      "type": "picture-choice",
+      "mode": "child",
+      "prompt": "Покажи красное",
+      "parentScript": "Попроси ребёнка показать красный предмет. Не подсказывай руками — дай время.",
+      "options": [
+        { "id": "red", "label": "Красный кубик", "asset": "assets/red-block.svg", "correct": true },
+        { "id": "blue", "label": "Синий кубик", "asset": "assets/blue-block.svg", "correct": false }
+      ]
+    },
+    {
+      "id": "s3",
+      "type": "count",
+      "mode": "child",
+      "prompt": "Сколько яблок?",
+      "parentScript": "Посчитайте вместе вслух. Пусть ребёнок сам назовёт число.",
+      "items": { "kind": "circle", "color": "red", "count": 3 },
+      "answer": 3
+    },
+    {
+      "id": "s4",
+      "type": "offline-task",
+      "mode": "parent",
+      "asset": "assets/luntic-help.svg",
+      "actionText": "Разложите кубики по двум мисочкам: в одну — красные, в другую — синие.",
+      "checklist": [
+        "Ребёнок взял кубик самостоятельно",
+        "Назвал цвет (или показал пальцем)",
+        "Положил в нужную мисочку"
+      ],
+      "parentScript": "Действие выполняется руками вне экрана. После — подтверди галочками."
+    },
+    {
+      "id": "s5",
+      "type": "reflection",
+      "mode": "parent",
+      "asset": "assets/luntic-happy.svg",
+      "questions": [
+        "Что получилось легче всего?",
+        "Где ребёнку нужна была помощь?"
+      ],
+      "parentScript": "Отметьте вместе, что получилось. Никаких оценок — просто наблюдения."
+    }
+  ]
+}

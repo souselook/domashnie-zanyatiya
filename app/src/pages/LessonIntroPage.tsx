@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { loadLesson, loadManifest, loadRegistry } from '../core/loader';
+import { resolveLesson } from '../core/moduleSource';
 import type { Lesson, Manifest } from '../core/schema';
 import ErrorPanel from '../components/ErrorPanel';
 
@@ -19,18 +19,12 @@ export default function LessonIntroPage() {
   useEffect(() => {
     let alive = true;
     (async () => {
-      const reg = await loadRegistry();
-      if (!reg.ok) { if (alive) setError(reg.error); return; }
-      const entry = reg.data.modules.find((m) => m.id === moduleId && m.enabled);
-      if (!entry) { if (alive) setError({ code: 'NOT_FOUND', message: 'Модуль не найден в реестре.' }); return; }
-      const man = await loadManifest(entry);
-      if (!man.ok) { if (alive) setError(man.error); return; }
-      const les = await loadLesson(man.data, lessonFile);
+      const r = await resolveLesson(moduleId, lessonFile);
       if (!alive) return;
-      if (!les.ok) { setError(les.error); return; }
-      setManifest(man.data);
-      setLesson(les.data);
-      setReady(les.data.materials.map(() => false));
+      if (!r.ok) { setError(r.error); return; }
+      setManifest(r.data.rec.manifest);
+      setLesson(r.data.lesson);
+      setReady(r.data.lesson.materials.map(() => false));
     })();
     return () => { alive = false; };
   }, [moduleId, lessonFile]);

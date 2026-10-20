@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useSettings } from '../hooks/useSettings';
 import { resetAllProgress } from '../core/storage';
-import { ttsSupported } from '../core/tts';
 
 export default function SettingsPage() {
   const { settings, update, reset } = useSettings();
@@ -13,18 +12,15 @@ export default function SettingsPage() {
       <h1 className="text-2xl font-extrabold">Настройки</h1>
 
       <section className="card space-y-4">
-        <label className="flex items-center justify-between gap-4">
-          <span className="font-bold">🔊 Озвучивание инструкций{ttsSupported() ? '' : ' (недоступно в этом браузере)'}</span>
-          <input type="checkbox" className="w-6 h-6 accent-amber1" checked={settings.ttsEnabled && ttsSupported()}
-                 disabled={!ttsSupported()}
-                 onChange={(e) => update({ ttsEnabled: e.target.checked })} />
-        </label>
-        <label className="block">
-          <span className="font-bold">Скорость речи: {settings.speechRate.toFixed(1)}×</span>
-          <input type="range" min={0.5} max={1.5} step={0.1} value={settings.speechRate}
-                 onChange={(e) => update({ speechRate: Number(e.target.value) })}
-                 className="w-full accent-amber1 mt-1" />
-        </label>
+        {/* TTS в v1 не реализуется (согласованное решение): переключатель disabled */}
+        <fieldset className="space-y-1">
+          <label className="flex items-center justify-between gap-4">
+            <span className="font-bold">🔇 Озвучивание инструкций</span>
+            <input type="checkbox" className="w-6 h-6 accent-amber1 opacity-50" checked={false} disabled
+                   aria-label="Озвучивание появится в следующей версии" />
+          </label>
+          <p className="text-sm text-cocoa/60">Озвучивание появится в следующей версии.</p>
+        </fieldset>
         <fieldset>
           <legend className="font-bold mb-2">Размер шрифта</legend>
           <div className="flex gap-2">
@@ -47,7 +43,7 @@ export default function SettingsPage() {
       <section className="card border-red-200 space-y-3">
         <h2 className="font-extrabold text-lg">Данные</h2>
         <p className="text-sm opacity-70">
-          Весь прогресс хранится только на этом устройстве (localStorage). Персональные данные ребёнка не собираются.
+          Весь прогресс хранится только на этом устройстве (IndexedDB). Персональные данные ребёнка не собираются.
         </p>
         {!confirmReset ? (
           <button type="button" className="btn-danger w-full" onClick={() => setConfirmReset(true)}>
@@ -56,7 +52,7 @@ export default function SettingsPage() {
         ) : (
           <div className="flex gap-2">
             <button type="button" className="btn-danger flex-1"
-                    onClick={() => { resetAllProgress(); setCleared(true); setConfirmReset(false); }}>
+                    onClick={async () => { await resetAllProgress(); setCleared(true); setConfirmReset(false); }}>
               Да, удалить всё
             </button>
             <button type="button" className="btn-secondary flex-1" onClick={() => setConfirmReset(false)}>Отмена</button>

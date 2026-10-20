@@ -4,6 +4,8 @@ import {
   registrySchema, manifestSchema, lessonSchema,
   type Registry, type Manifest, type Lesson, type RegistryEntry,
 } from './schema';
+import { getModule, getAllModules, putModule, type StoredModule } from './db';
+import { log } from './log';
 
 /* ── semver-сравнение (мажор.минор.патч) ─────────────────────── */
 
@@ -119,4 +121,79 @@ export function assetUrl(moduleId: string, rel?: string): string | undefined {
 /** Отсортированный по order список файлов уроков манифеста. */
 export function sortedLessonFiles(m: Manifest): string[] {
   return [...m.lessons].sort((a, b) => a.order - b.order).map((l) => l.file);
+}
+
+/* ══ IndexedDB-слой: основной источник истины (утверждение 2) ══ */
+
+/** Все модули из IndexedDB (включая seed — фильтрация на уровне UI). */
+export async function listStoredModules(): Promise<StoredModule[]> {
+  const all = await getAllModules();
+  return all.sort((a, b) => a.addedAt.localeCompare(b.addedAt));
+}
+
+export async function getStoredModule(id: string): Promise<LoadResult<StoredModule>> {
+  const rec = await getModule(id);
+  if (!rec) return coreError('NOT_FOUND', `Модуль «${id}» не установлен.`);
+  const compat = validateCompatibility(rec.manifest);
+  if (!compat.ok) return compat;
+  return { ok: true, data: rec };
+}
+
+/** Урок из хранимой записи (уже провалидирован при установке). */
+export function lessonFromRecord(rec: StoredModule, file: string): LoadResult<Lesson> {
+  const lesson = rec.lessons[file];
+  if (!lesson) return coreError('NOT_FOUND', `Урок «${file}» отсутствует в модуле «${rec.id}».`);
+  return { ok: true, data: lesson };
+}
+
+/** URL визуала шага/опции: сначала ассеты zip (dataURL), затем файлы public/modules. */
+export function moduleAssetUrl(rec: StoredModule, rel?: string): string | undefined {
+  if (!rel) return undefined;
+  const data = rec.assets[rel];
+  if (data) return data;
+  if (rec.isSeed) return assetUrl(rec.id, rel); // seed-модули лежат в public/modules
+  return undefined;
+}
+
+/* ══ Seed: служебные демо-модули из /modules/registry.json (один раз) ══ */
+
+const SEED_FLAG_KEY = 'hl.seeded.v1';
+
+export function isSeeded(): boolean {
+  try { return localStorage.getItem(SEED_FLAG_KEY) === 'true'; } catch { return false; }
+}
+
+export function markSeeded(): void {
+  try { localStorage.setItem(SEED_FLAG_KEY, 'true'); } catch { /* ignore */ }
+}
+
+/**
+ * Однократный перенос служебных модулей из публичного реестра в IndexedDB.
+ * Флаг ставится ДО копирования: удалённые пользователем seed-модули не возвращаются.
+ * broken-demo НЕ сеется — он живёт только в tests/fixtures (утверждение C).
+ */
+export async function seedOnce(): Promise<void> {
+  if (isSeeded()) return;
+  markSeeded();
+  const reg = await loadRegistry();
+  if (!reg.ok) { log.warn('[seed] реестр недоступен, пропускаем:', reg.error.message); return; }
+  for (const entry of reg.data.modules.filter((m) => m.enabled && m.id !== 'broken-demo')) {
+    const man = await loadManifest(entry);
+    if (!man.ok) { log.warn(`[seed] модуль «${entry.id}» пропущен:`, man.error.message); continue; }
+    if (await getModule(man.data.id)) continue; // уже есть — не трогаем
+    const lessons: Record<string, Lesson> = {};
+    for (const f of sortedLessonFiles(man.data)) {
+      const les = await loadLesson(man.data, f);
+      if (!les.ok) { log.warn(`[seed] урок ${f} модуля «${entry.id}» пропущен:`, les.error.message); continue; }
+      lessons[f] = les.data;
+    }
+    if (man.data.lessons.length !== 12) {
+      log.warn(`[loader] seed module ${man.data.id} bypasses 12-lesson rule`);
+    }
+    await putModule({
+      id: man.data.id, manifest: man.data, lessons, assets: {},
+      status: 'ready', isSeed: true, addedAt: new Date().toISOString(),
+    });
+    log.info(`[seed] служебный модуль «${man.data.id}» установлен.`);
+  }
 }

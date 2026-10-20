@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { loadLesson, loadManifest, loadRegistry } from '../core/loader';
+import { resolveLesson } from '../core/moduleSource';
 import type { Lesson, Manifest, Step } from '../core/schema';
 import { usePlayer } from '../hooks/usePlayer';
 import { useSettings } from '../hooks/useSettings';
-import { speak, stopSpeaking, ttsSupported } from '../core/tts';
 import {
   loadLessonProgress, upsertStep, setLastStep,
   type LessonProgress,
@@ -17,6 +16,7 @@ export default function PlayerPage() {
   const lessonFile = decodeURIComponent(file);
   const [manifest, setManifest] = useState<Manifest | null>(null);
   const [lesson, setLesson] = useState<Lesson | null>(null);
+  const [assets, setAssets] = useState<Record<string, string>>({}); // zip-ассеты из IndexedDB
   const [error, setError] = useState<unknown>(null);
   const [progress, setProgress] = useState<LessonProgress | undefined>();
   const { settings } = useSettings();
@@ -25,18 +25,13 @@ export default function PlayerPage() {
   useEffect(() => {
     let alive = true;
     (async () => {
-      const reg = await loadRegistry();
-      if (!reg.ok) { if (alive) setError(reg.error); return; }
-      const entry = reg.data.modules.find((m) => m.id === moduleId && m.enabled);
-      if (!entry) { if (alive) setError({ code: 'NOT_FOUND', message: 'Модуль не найден в реестре.' }); return; }
-      const man = await loadManifest(entry);
-      if (!man.ok) { if (alive) setError(man.error); return; }
-      const les = await loadLesson(man.data, lessonFile);
+      const r = await resolveLesson(moduleId, lessonFile);
       if (!alive) return;
-      if (!les.ok) { setError(les.error); return; }
-      setManifest(man.data);
-      setLesson(les.data);
-      setProgress(loadLessonProgress(man.data.id, les.data.id));
+      if (!r.ok) { setError(r.error); return; }
+      setManifest(r.data.rec.manifest);
+      setLesson(r.data.lesson);
+      setAssets(r.data.rec.assets);
+      setProgress(loadLessonProgress(r.data.rec.id, r.data.lesson.id));
     })();
     return () => { alive = false; };
   }, [moduleId, lessonFile]);
@@ -67,8 +62,7 @@ export default function PlayerPage() {
     setNotes(progress?.steps[step.id]?.notes ?? '');
     stepStartRef.current = Date.now();
     setLastStep(manifest.id, lesson.id, step.id);
-    if (settings.ttsEnabled && ttsSupported()) speak(step.parentScript, settings.speechRate, true);
-    return () => stopSpeaking();
+    // TTS в v1 не вызывается (согласованное решение): только текст инструкции.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ctx.stepIndex, lesson?.id]);
 
@@ -105,10 +99,11 @@ export default function PlayerPage() {
 
   const repeatInstruction = useCallback(() => {
     if (!step) return;
+    // «Повторить инструкцию» = подсветка текста + скролл к началу блока (без звука, v1)
     setHighlight(true);
     window.setTimeout(() => setHighlight(false), 1200);
-    speak(step.parentScript, settings.speechRate, settings.ttsEnabled && ttsSupported());
-  }, [step, settings]);
+    document.querySelector('.parent-script')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [step]);
 
   if (error && typeof error === 'object' && 'code' in error) return <ErrorPanel error={error as never} />;
   if (!manifest || !lesson || !step) return <p className="text-center text-cocoa/60 py-12">Загружаем занятие…</p>;
@@ -178,6 +173,7 @@ export default function PlayerPage() {
         {isChildMode && <p className="text-sm opacity-60 mb-3 text-center">🧒 Режим ребёнка — большие кнопки, минимум текста</p>}
         <TaskRenderer
           step={step} moduleId={manifest.id}
+          resolveAssetSrc={(rel) => assets[rel]}
           selectedId={selectedId} onSelectOption={setSelectedId}
           countAnswer={countAnswer} onCountAnswer={setCountAnswer}
           confirmed={offlineConfirmed}
