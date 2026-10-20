@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<symbol id="digit-0" viewBox="0 0 128 128"><path d="M64 25 C45 25, 30 45, 30 64 C30 83, 45 103, 64 103 C83 103, 98 83, 98 64 C98 45, 83 25, 64 25 Z" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="digit-1" viewBox="0 0 128 128"><path d="M64 25 L64 103 M45 45 L64 25" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="digit-2" viewBox="0 0 128 128"><path d="M35 40 C35 30, 93 30, 93 50 C93 70, 35 80, 35 103 L93 103" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="digit-3" viewBox="0 0 128 128"><path d="M35 30 L75 30 C90 30, 90 55, 75 64 C90 73, 90 98, 75 98 L35 98" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="digit-4" viewBox="0 0 128 128"><path d="M85 25 L85 103 M85 70 L30 70 L64 25 L64 70" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="digit-5" viewBox="0 0 128 128"><path d="M93 30 L40 30 L40 60 C60 60, 85 70, 85 90 C85 105, 60 105, 35 95" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="digit-6" viewBox="0 0 128 128"><path d="M85 35 C60 25, 35 45, 35 70 C35 95, 55 105, 70 105 C85 105, 95 90, 95 75 C95 60, 80 55, 65 65" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="digit-7" viewBox="0 0 128 128"><path d="M35 30 L93 30 L55 103" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="digit-8" viewBox="0 0 128 128"><path d="M64 30 C45 30, 40 50, 64 64 C88 78, 83 98, 64 98 C45 98, 40 78, 64 64 C88 50, 83 30, 64 30 Z" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="digit-9" viewBox="0 0 128 128"><path d="M43 93 C68 103, 93 83, 93 58 C93 33, 73 23, 58 23 C43 23, 33 38, 33 53 C33 68, 48 73, 63 63" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="digit-10" viewBox="0 0 128 128"><path d="M40 30 L40 98 M25 50 L40 30 M80 30 C65 30, 55 45, 55 64 C55 83, 65 98, 80 98 C95 98, 105 83, 105 64 C105 45, 95 30, 80 30 Z" fill="none" stroke="#4C1D95" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>

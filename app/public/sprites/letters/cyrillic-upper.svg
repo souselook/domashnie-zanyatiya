@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<symbol id="letter-А" viewBox="0 0 128 128"><path d="M30 108 L64 20 L98 108 M42 75 L86 75" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-О" viewBox="0 0 128 128"><circle cx="64" cy="64" r="44" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round"/></symbol>
+<symbol id="letter-У" viewBox="0 0 128 128"><path d="M30 20 L64 64 L98 108 M64 64 L64 20" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-М" viewBox="0 0 128 128"><path d="M30 108 L30 20 L64 64 L98 20 L98 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-П" viewBox="0 0 128 128"><path d="M30 108 L30 20 L98 20 L98 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-С" viewBox="0 0 128 128"><path d="M90 35 A44 44 0 1 0 90 93" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round"/></symbol>
+<symbol id="letter-К" viewBox="0 0 128 128"><path d="M30 20 L30 108 M30 64 L98 20 M30 64 L98 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Т" viewBox="0 0 128 128"><path d="M20 20 L108 20 M64 20 L64 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Б" viewBox="0 0 128 128"><path d="M30 20 L30 108 M30 20 L70 20 A25 25 0 0 1 70 45 L30 45 M30 65 L75 65 A30 30 0 0 1 75 108 L30 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-В" viewBox="0 0 128 128"><path d="M30 20 L30 108 M30 20 L75 20 A25 25 0 0 1 75 45 L30 45 M30 65 L80 65 A30 30 0 0 1 80 108 L30 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Г" viewBox="0 0 128 128"><path d="M30 20 L98 20 M30 20 L30 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Д" viewBox="0 0 128 128"><path d="M30 108 L30 45 L98 45 L98 108 M20 108 L108 108 M64 20 L64 45" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Е" viewBox="0 0 128 128"><path d="M98 20 L30 20 L30 108 L98 108 M30 64 L80 64" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Ё" viewBox="0 0 128 128"><path d="M98 20 L30 20 L30 108 L98 108 M30 64 L80 64 M45 10 L45 10 M83 10 L83 10" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Ж" viewBox="0 0 128 128"><path d="M64 20 L64 108 M20 20 L108 108 M108 20 L20 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-З" viewBox="0 0 128 128"><path d="M30 35 L80 35 A25 25 0 0 1 80 64 L30 64 L85 64 A30 30 0 0 1 85 93 L30 93" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-И" viewBox="0 0 128 128"><path d="M30 20 L30 108 L98 20 L98 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Й" viewBox="0 0 128 128"><path d="M30 20 L30 108 L98 20 L98 108 M78 10 Q88 10 98 10" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Л" viewBox="0 0 128 128"><path d="M20 108 L64 20 L98 108 M98 108 L98 60" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Н" viewBox="0 0 128 128"><path d="M30 20 L30 108 M98 20 L98 108 M30 64 L98 64" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Р" viewBox="0 0 128 128"><path d="M30 20 L30 108 M30 20 L75 20 A30 30 0 0 1 75 50 L30 50" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Ф" viewBox="0 0 128 128"><path d="M64 20 L64 108 M64 64 A30 30 0 1 1 64 64" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Х" viewBox="0 0 128 128"><path d="M20 20 L108 108 M108 20 L20 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Ц" viewBox="0 0 128 128"><path d="M30 20 L30 108 L98 20 L98 108 M98 108 L98 90" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Ч" viewBox="0 0 128 128"><path d="M30 20 L64 64 L64 108 L30 108 M64 64 L98 64 L98 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Ш" viewBox="0 0 128 128"><path d="M30 20 L30 90 L98 90 L98 20 M64 20 L64 90" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Щ" viewBox="0 0 128 128"><path d="M30 20 L30 90 L98 90 L98 20 M64 20 L64 90 M98 90 L98 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Ъ" viewBox="0 0 128 128"><path d="M30 20 L30 108 M30 65 L70 65 A25 25 0 0 1 70 108 L30 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Ы" viewBox="0 0 128 128"><path d="M30 65 L50 65 A20 20 0 0 1 50 108 L30 108 M80 20 L80 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Ь" viewBox="0 0 128 128"><path d="M30 20 L30 108 M30 20 L70 20 A25 25 0 0 1 70 50 L30 50" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Э" viewBox="0 0 128 128"><path d="M90 35 A44 44 0 1 0 90 93 M90 35 L60 35" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round"/></symbol>
+<symbol id="letter-Ю" viewBox="0 0 128 128"><path d="M98 20 L98 108 M64 64 A30 30 0 1 1 64 64" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+<symbol id="letter-Я" viewBox="0 0 128 128"><path d="M30 20 L75 20 A30 30 0 0 1 75 50 L30 50 L64 108 L30 108" fill="none" stroke="#4C1D95" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
