@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { assetUrl } from '../core/loader';
 import { stepScene } from '../core/scene/legacy';
 import type { Step, Scene } from '../core/schema';
@@ -105,19 +105,89 @@ function InstructionView() {
 }
 
 function PictureChoiceView({ step, moduleId, readOnly, selectedId, onSelectOption, resolveAssetSrc }: Required<Pick<TaskViewProps, 'step' | 'moduleId' | 'readOnly'>> & Pick<TaskViewProps, 'selectedId' | 'onSelectOption' | 'resolveAssetSrc'> & { step: Extract<Step, { type: 'picture-choice' }> }) {
+  const isDrag = step.interaction === 'drag' && !readOnly;
+  // v1.1.1 drag-режим: pointerdown на варианте → «намерение»; pointerup внутри drop-зоны → выбор.
+  // Tap-to-select работает всегда (a11y/fallback): клик по варианту выделяет, клик/Enter по drop-зоне размещает.
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const dragIntent = useRef<string | null>(null);
+  const zoneRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!isDrag) return;
+    const up = () => { dragIntent.current = null; setDraggingId(null); };
+    window.addEventListener('pointerup', up);
+    window.addEventListener('pointercancel', up);
+    return () => {
+      window.removeEventListener('pointerup', up);
+      window.removeEventListener('pointercancel', up);
+    };
+  }, [isDrag]);
+
+  const inZone = (x: number, y: number) => {
+    const el = zoneRef.current;
+    if (!el) return false;
+    const r = el.getBoundingClientRect();
+    return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom;
+  };
+
+  const handleZonePointerUp = (e: React.PointerEvent) => {
+    if (!isDrag || !dragIntent.current) return;
+    e.preventDefault();
+    if (inZone(e.clientX, e.clientY)) onSelectOption?.(dragIntent.current);
+    dragIntent.current = null;
+    setDraggingId(null);
+  };
+
+  // Клавигатура на самом варианте: Enter/Space = tap-to-select (работает и в drag-режиме).
+  const keySelect = (id: string) => (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectOption?.(id); }
+  };
+
+  // v1.1.1 фикс: клик по варианту в drag-режиме не должен «приземляться» на
+  // drop-зону, если вариант лежит под ней (иначе тап-тап срабатывал дважды и
+  // тесты проходили мимо реального пути). Останавливаем всплытие pointer-событий.
+  const stopBubble = (e: React.PointerEvent) => e.stopPropagation();
+
   return (
     <div>
       <p className="text-2xl font-extrabold mb-4">{step.prompt}</p>
+      {isDrag && (
+        <div
+          ref={zoneRef}
+          data-testid="drop-zone"
+          role="button"
+          tabIndex={0}
+          aria-label="Зона размещения выбранной картинки"
+          className="card border-4 border-dashed border-amber1/50 min-h-[96px] flex items-center justify-center mb-4 text-cocoa/60 select-none touch-none"
+          onPointerUp={handleZonePointerUp}
+          onClick={() => { if (selectedId) onSelectOption?.(selectedId); }}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); if (selectedId) onSelectOption?.(selectedId); } }}
+        >
+          {selectedId
+            ? `Выбрано: ${step.options.find((o) => o.id === selectedId)?.label ?? selectedId}`
+            : (draggingId ? 'Отпустите здесь' : 'Перетащите картинку сюда или выберите и нажмите')}
+        </div>
+      )}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-4" role={readOnly ? undefined : 'group'} aria-label="Варианты ответа">
         {step.options.map((o) => (
           <button key={o.id} type="button" disabled={readOnly}
-            className="task-option" aria-pressed={selectedId === o.id}
+            data-testid={isDrag ? `drag-source-${o.id}` : undefined}
+            className={`task-option ${draggingId === o.id ? 'opacity-70' : ''}`}
+            aria-pressed={selectedId === o.id}
+            style={{ minHeight: 44, touchAction: isDrag ? 'none' : undefined }}
+            onPointerDown={isDrag ? (e) => {
+              stopBubble(e);
+              dragIntent.current = o.id;
+              setDraggingId(o.id);
+            } : undefined}
+            onKeyDown={keySelect(o.id)}
             onClick={() => onSelectOption?.(o.id)}>
             <OptionImage moduleId={moduleId} step={o} resolveAssetSrc={resolveAssetSrc} />
             <span>{o.label}</span>
           </button>
         ))}
       </div>
+      {isDrag && draggingId && <div data-testid="drag-active" className="sr-only" aria-live="polite">Перетаскивание: {draggingId}</div>}
     </div>
   );
 }
