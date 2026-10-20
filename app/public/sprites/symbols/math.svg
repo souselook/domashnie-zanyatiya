@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+<symbol id="plus" viewBox="0 0 64 64"><path d="M12 32 L52 32 M32 12 L32 52" fill="none" stroke="#4C1D95" stroke-width="7" stroke-linecap="round"/></symbol>
+<symbol id="minus" viewBox="0 0 64 64"><path d="M12 32 L52 32" fill="none" stroke="#4C1D95" stroke-width="7" stroke-linecap="round"/></symbol>
+<symbol id="equals" viewBox="0 0 64 64"><path d="M12 22 L52 22 M12 42 L52 42" fill="none" stroke="#4C1D95" stroke-width="7" stroke-linecap="round"/></symbol>
+</svg>
