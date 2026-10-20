@@ -3,10 +3,14 @@
 
 import { z } from 'zod';
 
-/** Ссылка на спрайт: `<категория>/<файл>#<symbol-id>` или без #symbol (лист целиком). */
-export const spriteRefSchema = z
-  .string()
-  .regex(/^[a-z0-9-]+\/[A-Za-z0-9_.-]+(#[A-Za-z0-9_-]+)?$/, 'Недопустимая ссылка на спрайт');
+/**
+ * Ссылка на спрайт: `<категория>/<файл>#<symbol-id>` или без #symbol (лист целиком / ассет модуля).
+ * Запрещены ../, http(s):, data:, абсолютные пути — whitelist-регулярка.
+ * Cyrillic в symbol-id разрешён (letter-А и т.п.).
+ */
+export const SPRITE_REF_PATTERN = /^[a-z0-9-]+\/[A-Za-z0-9._-]+(?:#[\w\u0400-\u04FF.-]+)?$/;
+
+export const spriteRefSchema = z.string().regex(SPRITE_REF_PATTERN, { message: 'Недопустимая ссылка на спрайт' });
 
 export const BACKGROUND_TOKENS = ['soft-lilac', 'white', 'transparent'] as const;
 
