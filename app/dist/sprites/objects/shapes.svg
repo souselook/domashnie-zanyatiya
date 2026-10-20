@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<symbol id="circle-red" viewBox="0 0 128 128"><circle cx="64" cy="64" r="45" fill="#E74C3C" stroke="#4C1D95" stroke-width="3"/></symbol>
+<symbol id="circle-blue" viewBox="0 0 128 128"><circle cx="64" cy="64" r="45" fill="#3498DB" stroke="#4C1D95" stroke-width="3"/></symbol>
+<symbol id="circle-green" viewBox="0 0 128 128"><circle cx="64" cy="64" r="45" fill="#2ECC71" stroke="#4C1D95" stroke-width="3"/></symbol>
+<symbol id="square-red" viewBox="0 0 128 128"><rect x="24" y="24" width="80" height="80" rx="12" fill="#E74C3C" stroke="#4C1D95" stroke-width="3"/></symbol>
+<symbol id="square-blue" viewBox="0 0 128 128"><rect x="24" y="24" width="80" height="80" rx="12" fill="#3498DB" stroke="#4C1D95" stroke-width="3"/></symbol>
+<symbol id="square-green" viewBox="0 0 128 128"><rect x="24" y="24" width="80" height="80" rx="12" fill="#2ECC71" stroke="#4C1D95" stroke-width="3"/></symbol>
+<symbol id="triangle-red" viewBox="0 0 128 128"><path d="M64 19 L109 97 A12 12 0 0 1 97 109 L31 109 A12 12 0 0 1 19 97 Z" fill="#E74C3C" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/></symbol>
+<symbol id="triangle-blue" viewBox="0 0 128 128"><path d="M64 19 L109 97 A12 12 0 0 1 97 109 L31 109 A12 12 0 0 1 19 97 Z" fill="#3498DB" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/></symbol>
+</svg>
