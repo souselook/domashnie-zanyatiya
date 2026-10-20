@@ -18,7 +18,6 @@ export default function PlayerPage() {
   const [lesson, setLesson] = useState<Lesson | null>(null);
   const [assets, setAssets] = useState<Record<string, string>>({}); // zip-ассеты из IndexedDB
   const [error, setError] = useState<unknown>(null);
-  const [progress, setProgress] = useState<LessonProgress | undefined>();
   const { settings } = useSettings();
 
   // загрузка урока
@@ -31,10 +30,19 @@ export default function PlayerPage() {
       setManifest(r.data.rec.manifest);
       setLesson(r.data.lesson);
       setAssets(r.data.rec.assets);
+      // progress инициализируется синхронно (см. useState-инициализатор ниже) — здесь только mirror-обновление
       setProgress(loadLessonProgress(r.data.rec.id, r.data.lesson.id));
     })();
     return () => { alive = false; };
   }, [moduleId, lessonFile]);
+
+  /* ── Этап 5.1: прогресс читаем синхронно при старте урока (localStorage-кэш,
+     hydrateProgressCache выполняется на старте приложения). Раньше setProgress
+     приходил отдельным рендером после загрузки урока — startStep менялся уже ПОСЛЕ
+     первого клика «Дальше», и RESET затирал позицию пользователя. Синхронный старт
+     устраняет гонку полностью; эффект ниже только обновляет кэш при внешних изменениях. ── */
+  const [progress, setProgress] = useState<LessonProgress | undefined>(() =>
+    lesson ? loadLessonProgress(manifest?.id ?? moduleId, lesson.id) : undefined);
 
   // восстановление шага из прогресса
   const startStep = useMemo(() => {
@@ -42,6 +50,12 @@ export default function PlayerPage() {
     const i = lesson.steps.findIndex((s) => s.id === progress.lastStepId);
     return i >= 0 ? i : 0;
   }, [lesson, progress]);
+
+  useEffect(() => {
+    if (lesson && manifest) {
+      setProgress(loadLessonProgress(manifest.id, lesson.id));
+    }
+  }, [manifest?.id, lesson?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const [ctx, player] = usePlayer(lesson?.steps.length ?? 0, startStep, !!lesson);
 
@@ -77,6 +91,21 @@ export default function PlayerPage() {
     }, 1000);
     return () => window.clearInterval(id);
   }, [step?.id, settings.timerEnabled]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // офлайн-галочки: если шаг уже подтверждён родителем (offlineConfirmed —
+  // в т.ч. после reload), синхронизируем локальный массив TaskRenderer с
+  // родительским состоянием; иначе «Дальше» была бы заблокирована навсегда
+  useEffect(() => {
+    if (!step || step.type !== 'offline-task') return;
+    const confirmed = !!progress?.steps[step.id]?.offlineConfirmed;
+    setChecks((prev) => {
+      const n = step.checklist?.length ?? 0;
+      if (prev.length === n && prev.every(Boolean)) return prev; // уже все отмечены
+      if (!confirmed) return prev;                               // не подтверждено — не трогаем
+      return new Array(n).fill(true);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ctx.stepIndex, lesson?.id, progress]);
 
   const markDone = useCallback((patch = {}) => {
     if (!manifest || !lesson || !step) return;
@@ -136,6 +165,21 @@ export default function PlayerPage() {
 
   const isChildMode = step.mode === 'child';
   const offlineConfirmed = !!progress?.steps[step.id]?.offlineConfirmed;
+
+  /* ── блокировка «Дальше» до выполнения интерактива (UX v1.0) ──
+     picture-choice: пока ребёнок не выбрал вариант.
+     offline-task: пока не отмечены ВСЕ пункты чек-листа (если чек-лист есть);
+     при его отсутствии шагу требуется только родительское подтверждение —
+     «Дальше» активна сразу (иначе был бы тупик). instruction/reflection/count —
+     поведение не меняется. Подсказка нейтральная, без давления. */
+  const nextBlocked =
+    (step.type === 'picture-choice' && !selectedId) ||
+    (step.type === 'offline-task' && !!step.checklist?.length && !checks.every(Boolean));
+  const nextHint =
+    step.type === 'picture-choice' && !selectedId ? 'Выберите картинку' :
+    step.type === 'offline-task' && !!step.checklist?.length && !checks.every(Boolean)
+      ? 'Отметьте выполненное' :
+      null;
 
   return (
     <div className="space-y-4">
@@ -200,16 +244,19 @@ export default function PlayerPage() {
       </section>
 
       {/* навигация стрелками: переход только по решению родителя */}
-      <nav aria-label="Навигация занятия" className="flex gap-3">
+      <nav aria-label="Навигация занятия" className="flex gap-3 flex-wrap">
         <button type="button" className="btn-secondary flex-1" onClick={() => player.send({ type: 'PREV' })} disabled={ctx.stepIndex === 0}>
           ← Назад
         </button>
         <button type="button" className="btn-secondary" onClick={() => player.send({ type: 'PAUSE' })} title="Пауза">⏸</button>
         <button type="button" className="btn-secondary" onClick={goSkip} title="Пропустить шаг">⏭</button>
-        <button type="button" className="btn-primary flex-1" onClick={goNext}>
+        <button type="button" className="btn-primary flex-1" onClick={goNext} disabled={nextBlocked} data-testid="next-btn">
           {ctx.stepIndex === lesson.steps.length - 1 ? 'Завершить ✔' : 'Дальше →'}
         </button>
       </nav>
+      {nextHint && (
+        <p className="text-center text-sm opacity-70" role="status" data-testid="next-hint">{nextHint}</p>
+      )}
       <p className="text-center text-sm"><Link to={`/module/${manifest.id}`} className="opacity-60 underline">Выйти из занятия</Link></p>
     </div>
   );

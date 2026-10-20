@@ -47,10 +47,30 @@ test('полный сценарий demo-урока с восстановлен�
   await startLink.click();
 
   // demo-урок: 4 шага (instruction → picture-choice → offline-task → reflection).
-  // Проходим два шага «Дальше», чтобы lastStepId гарантированно был не последним
-  // шагом — иначе после reload урок авто-завершается и индикатора нет.
-  await page.getByRole('button', { name: /Дальше/ }).click();
-  await page.getByRole('button', { name: /Дальше/ }).click();
+  // UI блокирует «Дальше» до выполнения интерактива (Этап 5.1): на s2 выбираем
+  // картинку, на s3 отмечаем чек-лист и подтверждаем. Проходим два шага, чтобы
+  // lastStepId гарантированно был не последним шагом — иначе после reload урок
+  // авто-завершается и индикатора нет.
+  await page.getByRole('button', { name: /Дальше/ }).click();          // s1 → s2
+
+  // s2 picture-choice: без выбора «Дальше» заблокирована + подсказка
+  const nextBtn = page.getByTestId('next-btn');
+  await expect(nextBtn).toBeDisabled();
+  await expect(page.getByTestId('next-hint')).toHaveText('Выберите картинку');
+  await page.getByRole('group', { name: 'Варианты ответа' }).getByRole('button').first().click();
+  await expect(nextBtn).toBeEnabled();
+  await nextBtn.click();                                               // s2 → s3
+
+  // s3 offline-task: без отмеченного чек-листа «Дальше» заблокирована + подсказка
+  await expect(nextBtn).toBeDisabled();
+  await expect(page.getByTestId('next-hint')).toHaveText('Отметьте выполненное');
+  const taskBoxes = page.locator('section[aria-label="Задание"] input[type="checkbox"]');
+  const tb = await taskBoxes.count();
+  for (let i = 0; i < tb; i++) await taskBoxes.nth(i).check({ force: true });
+  await expect(nextBtn).toBeEnabled();
+  await page.getByRole('button', { name: /Выполнили — подтверждаю/ }).click();
+  // после подтверждения родителя кнопка остаётся разблокированной (все пункты отмечены)
+  await expect(nextBtn).toBeEnabled();
   await expect(page.getByTestId('step-indicator')).toHaveText(/^3 \/ 4$/);
   // даём завершиться асинхронному persist() в IndexedDB перед перезагрузкой
   await page.waitForTimeout(500);
@@ -61,9 +81,11 @@ test('полный сценарий demo-урока с восстановлен�
   await expect(indicator).toBeVisible({ timeout: 15_000 });
   await expect(indicator).toHaveText(/^3 \/ 4$/);
 
-  // доходим до конца
+  // доходим до конца: s3 → s4 (галочки и подтверждение восстановлены офлайн-синком),
+  // затем «Завершить» на последнем шаге
+  const next = page.getByTestId('next-btn');
+  await expect(next).toBeEnabled({ timeout: 15_000 });
   for (let i = 0; i < 5; i++) {
-    const next = page.getByRole('button', { name: /Дальше|Завершить/ });
     if (!(await next.isVisible().catch(() => false))) break;
     await next.click();
   }
