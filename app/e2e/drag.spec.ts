@@ -8,7 +8,11 @@ const ZIP = readFileSync(new URL('../examples/demo-drag.zip', import.meta.url));
 test.beforeEach(async ({ page }) => {
   await page.goto('/#/');
   await page.evaluate(async () => {
-    localStorage.clear(); // сбрасывает и флаг hl.seeded.v1 — при перезагрузке seed-модуль установится заново
+    // ВАЖНО (фикс 1.1.1): НЕ делаем localStorage.clear() — он стирал флаг
+    // hl.seeded.v1, после перезагрузки запускался async seedOnce и гонка с
+    // uploadDemo давала «Модуль уже установлен» (zip не загружался, урок d1
+    // не открывался). Вместо полного clear — точечное удаление прогресса:
+    try { localStorage.removeItem('hl.progress.v1'); } catch { /* ignore */ }
     const regs = await navigator.serviceWorker?.getRegistrations?.() ?? [];
     await Promise.all(regs.map((r) => r.unregister()));
     const keys = await caches.keys();
@@ -25,29 +29,10 @@ async function uploadDemo(page: import('@playwright/test').Page) {
   await page.getByTestId('zip-input').setInputFiles({ name: 'demo-drag.zip', mimeType: 'application/zip', buffer: ZIP });
   await expect(page.getByText('Drag-демо', { exact: false }).first()).toBeVisible({ timeout: 15_000 });
 
-  // Страховка: UI-сброс асинхронен (dbClearProgress) и может не успеть до
-  // uploadDemo — после загрузки демо точечно чистим ТОЛЬКО store progress
+  // Страховка: после загрузки демо точечно чистим ТОЛЬКО store progress
   // (модуль demo-drag остаётся в IndexedDB), чтобы плеер гарантированно
   // стартовал с шага 1 (иначе RESET доматывает до s4 → «Занятие окончено»).
-  await page.evaluate(async () => {
-    localStorage.clear(); // включая зеркало hl.progress.v1
-    await new Promise<void>((res, rej) => {
-      const open = indexedDB.open('home-lessons');
-      open.onsuccess = () => {
-        const db = open.result;
-        try {
-          if (db.objectStoreNames.contains('progress')) {
-            const tx = db.transaction('progress', 'readwrite');
-            tx.objectStore('progress').clear();
-            tx.oncomplete = () => { db.close(); res(); };
-            tx.onerror = () => { db.close(); rej(tx.error); };
-          } else { db.close(); res(); }
-        } catch (e) { db.close(); rej(e as Error); }
-      };
-      open.onerror = () => rej(open.error ?? new Error('idb open fail'));
-      open.onblocked = () => res();
-    });
-  });
+  await clearProgressStore(page);
 }
 
 async function openLesson(page: import('@playwright/test').Page, name: RegExp) {
@@ -66,21 +51,52 @@ async function openLesson(page: import('@playwright/test').Page, name: RegExp) {
   for (let i = 0; i < (await boxes.count()); i++) await boxes.nth(i).check({ force: true });
   await startLink.click();
 
-  // Дойти до нужного picture-choice-шага и ОСТАТЬСЯ на нём: прокликивать
-  // «Дальше» только пока текущий шаг НЕ содержит task-интерактив (.task-option
-  // есть и в tap-, и в drag-режимах). Раньше helper доходил до s2 и продолжал
-  // кликать «Дальше» после решения теста — урок завершался («Занятие окончено»).
-  const next = page.getByTestId('next-btn');
-  await expect(next).toBeVisible({ timeout: 15_000 });
-  for (let i = 0; i < 10; i++) {
-    if (await page.locator('.task-option').count() > 0) return;
-    if (await next.isEnabled().catch(() => false)) {
-      await next.click();
-      await page.waitForTimeout(150);
-    } else {
-      return; // шаг требует интерактива — дальше решает конкретный тест
-    }
-  }
+  // ФИКС 1.1.1 (корневая причина «Занятие окончено» при маунте): переход
+  // интро → плеер происходит СРАЗУ после клика «▶ Начать занятие», а запись
+  // прогресса (setLastStep(s1)) из монтирования плеера пишется в IndexedDB
+  // АСИНХРОННО. Если сразу уйти с плеера (например, helper'ом вперёд по
+  // шагам), этот async-write может переслать устаревший снимок (lastStepId
+  // последнего шага прошлого прогона) ПОСЛЕ гидратации зеркала — RESET
+  // доматывает плеер до конца урока. Поэтому: ждём фактического монтирования
+  // плеера, вычищаем зеркало+IDB-store progress (уникальный момент — больше
+  // никто не пишет), даём app-гидратации перечитать пустой IDB и только then
+  // возвращаемся на страницу занятия.
+  const playerUrl = page.url();
+  await expect(page.getByTestId('step-indicator')).toBeVisible({ timeout: 15_000 });
+  await clearProgressStore(page);
+  await page.goto('/#/');
+  await page.reload(); // bootstrap: hydrateProgressCache() перечитает чистый IDB в зеркало
+  await page.goto(playerUrl);
+  await page.waitForURL(/#\/lesson\//);
+  await expect(page.getByTestId('step-indicator')).toBeVisible({ timeout: 15_000 });
+  // старт строго с шага 1 — если нет, гонка прогресса вернулась
+  await expect(page.getByTestId('step-indicator')).toHaveText(/1 \/ \d+/);
+}
+
+// Точечная чистка store progress в IndexedDB + зеркало hl.progress.v1
+// (модули остаются установленными). Используется как страховка после uploadDemo
+// и перед возвратом на страницу занятия.
+async function clearProgressStore(page: import('@playwright/test').Page) {
+  try { localStorage.removeItem('hl.progress.v1'); } catch { /* ignore */ }
+  await page.evaluate(async () => {
+    try { localStorage.removeItem('hl.progress.v1'); } catch { /* ignore */ }
+    await new Promise<void>((res, rej) => {
+      const open = indexedDB.open('home-lessons');
+      open.onsuccess = () => {
+        const db = open.result;
+        try {
+          if (db.objectStoreNames.contains('progress')) {
+            const tx = db.transaction('progress', 'readwrite');
+            tx.objectStore('progress').clear();
+            tx.oncomplete = () => { db.close(); res(); };
+            tx.onerror = () => { db.close(); rej(tx.error); };
+          } else { db.close(); res(); }
+        } catch (e) { db.close(); rej(e as Error); }
+      };
+      open.onerror = () => rej(open.error ?? new Error('idb open fail'));
+      open.onblocked = () => res();
+    });
+  });
 }
 
 // Перейти со текущего picture-choice-шага на следующий (после решения теста).
