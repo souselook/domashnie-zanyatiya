@@ -94,6 +94,8 @@ export const pictureChoiceSchema = z.object({
   ...visualFields,
   type: z.literal('picture-choice'),
   prompt: z.string().min(1),
+  // v1.1.1: additive — способ взаимодействия. default 'tap' (backward compat с v1.0).
+  interaction: z.enum(['tap', 'drag']).default('tap').optional(),
   options: z.array(z.object({
     ...optionBase,
     correct: z.boolean().default(false),

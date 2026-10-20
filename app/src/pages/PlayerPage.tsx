@@ -57,7 +57,23 @@ export default function PlayerPage() {
     }
   }, [manifest?.id, lesson?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  /* hotfix v1.0.1: «Дальше» перематывала к началу урока / завершала занятие.
+     setLastStep пишет прогресс асинхронно; React мог пакетировать NEXT и
+     обновление startStep в одном рендере, RESET проходил с ЗАПОЗДАЛЫМ значением
+     (шаг 0) и перематывал плеер назад — до экрана завершения. Прогресс теперь
+     читается синхронно из localStorage-кэша при каждом изменении шага, поэтому
+     startStep всегда актуален и RESET безопасен. */
   const [ctx, player] = usePlayer(lesson?.steps.length ?? 0, startStep, !!lesson);
+
+  /* hotfix v1.0.1: синхронизируем React-состояние progress с localStorage-кэшем
+     при каждой смене шага. setLastStep пишет в кэш СИНХРОННО (в IndexedDB —
+     асинхронно), поэтому после клика «Дальше» startStep становится актуальным
+     в том же дереве, что и stepIndex: RESET не может перематывать плеер к
+     устаревшему шагу и тем более доводить авто-QUIT до «Занятие окончено». */
+  useEffect(() => {
+    if (!lesson || !manifest) return;
+    setProgress(loadLessonProgress(manifest.id, lesson.id));
+  }, [ctx.stepIndex, manifest?.id, lesson?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /* ── локальный интерактив текущего шага ─────────────────────── */
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -115,10 +131,19 @@ export default function PlayerPage() {
 
   const goNext = useCallback(() => {
     if (!step) return;
-    if (ctx.stepIndex < (lesson?.steps.length ?? 1) - 1) markDone();
-    else markDone(); // последний шаг → done тоже считаем пройденным
+    markDone();
+    // hotfix v1.0.1 (усилен в 1.1.1): setLastStep пишет кэш синхронно, но React
+    // мог пакетировать NEXT и обновление startStep в одном батче — RESET
+    // проходил с устаревшим startStep и перематывал плеер (вплоть до «Занятие
+    // окончено»). Синхронный перевод progress.lastStepId на следующий шаг до
+    // dispatch гарантирует актуальный startStep в том же рендере.
+    if (manifest && lesson && ctx.stepIndex < lesson.steps.length - 1) {
+      const nextStepId = lesson.steps[ctx.stepIndex + 1].id;
+      setLastStep(manifest.id, lesson.id, nextStepId);
+      setProgress(loadLessonProgress(manifest.id, lesson.id));
+    }
     player.send({ type: 'NEXT' });
-  }, [ctx.stepIndex, lesson, markDone, player, step]);
+  }, [ctx.stepIndex, manifest, lesson, step, markDone, player]);
 
   const goSkip = useCallback(() => {
     if (!manifest || !lesson || !step) return;

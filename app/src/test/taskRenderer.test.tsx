@@ -34,4 +34,31 @@ describe('TaskRenderer', () => {
     expect(screen.getByText('Построй башню')).toBeInTheDocument();
     expect(screen.getByText('Башня стоит')).toBeInTheDocument();
   });
+
+  // ─── v1.1.1: drag-режим picture-choice ───
+  const pc = (over: Record<string, unknown>) => step({
+    id: 's', type: 'picture-choice', mode: 'child', parentScript: 'х', prompt: 'Что лишнее?',
+    options: [{ id: 'a', label: 'Круг' }, { id: 'b', label: 'Звезда' }], ...over,
+  });
+
+  it('tap-режим (default): drop-зоны нет — backward compat v1.0', () => {
+    render(<TaskRenderer moduleId="m" step={pc({})} selectedId={null} onSelectOption={() => {}} />);
+    expect(screen.queryByTestId('drop-zone')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Круг/ })).toBeEnabled();
+  });
+
+  it('drag-режим: рендерится drop-зона и drag-source-кнопки', () => {
+    render(<TaskRenderer moduleId="m" step={pc({ interaction: 'drag' })} selectedId={null} onSelectOption={() => {}} />);
+    expect(screen.getByTestId('drop-zone')).toBeInTheDocument();
+    expect(screen.getByTestId('drag-source-a')).toBeInTheDocument();
+    expect(screen.getByTestId('drag-source-b')).toBeInTheDocument();
+  });
+
+  it('drag-режим: tap-tap fallback — выбор варианта затем клик по зоне вызывает onSelectOption', () => {
+    const calls: string[] = [];
+    render(<TaskRenderer moduleId="m" step={pc({ interaction: 'drag' })}
+      selectedId="a" onSelectOption={(id) => calls.push(id)} />);
+    screen.getByTestId('drop-zone').click();
+    expect(calls).toEqual(['a']);
+  });
 });

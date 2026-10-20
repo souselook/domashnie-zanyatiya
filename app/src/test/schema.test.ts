@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { manifestSchema, lessonSchema, registrySchema } from '../core/schema';
+import { manifestSchema, lessonSchema, registrySchema, pictureChoiceSchema } from '../core/schema';
 
 const goodManifest = {
   manifestVersion: 1,
@@ -106,6 +106,28 @@ describe('lessonSchema', () => {
       ...goodLesson,
       steps: [baseStep({ type: 'picture-choice', prompt: 'Где?', options: [{ id: 'a', label: 'А' }] })],
     }).success).toBe(false);
+  });
+
+  // ─── v1.1.1: additive-контракт interaction для picture-choice ───
+  const pcStep = (over: Record<string, unknown>) => baseStep({
+    type: 'picture-choice', prompt: 'Где?',
+    options: [{ id: 'a', label: 'А' }, { id: 'b', label: 'Б' }], ...over,
+  });
+
+  it('picture-choice без interaction парсится с default "tap" (backward compat v1.0)', () => {
+    const r = pictureChoiceSchema.safeParse(pcStep({}));
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.interaction ?? 'tap').toBe('tap');
+  });
+
+  it('picture-choice принимает interaction: "drag"', () => {
+    const r = pictureChoiceSchema.safeParse(pcStep({ interaction: 'drag' }));
+    expect(r.success).toBe(true);
+    if (r.success) expect(r.data.interaction).toBe('drag');
+  });
+
+  it('picture-choice отклоняет неизвестное значение interaction', () => {
+    expect(pictureChoiceSchema.safeParse(pcStep({ interaction: 'swipe' })).success).toBe(false);
   });
 });
 
