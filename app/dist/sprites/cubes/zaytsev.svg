@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<symbol id="cube-gold" viewBox="0 0 128 128">
+<path d="M64 20 L104 44 L64 68 L24 44 Z" fill="#F59E0B" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M24 44 L64 68 L64 108 L24 84 Z" fill="#D68910" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M64 68 L104 44 L104 84 L64 108 Z" fill="#B7770A" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+</symbol>
+<symbol id="cube-blue" viewBox="0 0 128 128">
+<path d="M64 20 L104 44 L64 68 L24 44 Z" fill="#3498DB" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M24 44 L64 68 L64 108 L24 84 Z" fill="#2980B9" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M64 68 L104 44 L104 84 L64 108 Z" fill="#1F618D" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+</symbol>
+<symbol id="cube-green" viewBox="0 0 128 128">
+<path d="M64 20 L104 44 L64 68 L24 44 Z" fill="#2ECC71" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M24 44 L64 68 L64 108 L24 84 Z" fill="#27AE60" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M64 68 L104 44 L104 84 L64 108 Z" fill="#1E8449" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+</symbol>
+<symbol id="cube-gray" viewBox="0 0 128 128">
+<path d="M64 20 L104 44 L64 68 L24 44 Z" fill="#9CA3AF" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M24 44 L64 68 L64 108 L24 84 Z" fill="#6B7280" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M64 68 L104 44 L104 84 L64 108 Z" fill="#4B5563" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+</symbol>
+</svg>

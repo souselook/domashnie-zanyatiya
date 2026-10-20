@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<symbol id="bowl" viewBox="0 0 128 128">
+<path d="M24 56 Q24 96 64 96 Q104 96 104 56 Z" fill="#FFFFFF" stroke="#4C1D95" stroke-width="3"/>
+<ellipse cx="64" cy="56" rx="40" ry="12" fill="#FFFFFF" stroke="#4C1D95" stroke-width="3"/>
+</symbol>
+<symbol id="cup" viewBox="0 0 128 128">
+<path d="M36 32 L36 96 Q36 104 64 104 Q92 104 92 96 L92 32 Z" fill="#FFFFFF" stroke="#4C1D95" stroke-width="3"/>
+<path d="M92 48 Q112 48 112 64 Q112 80 92 80" fill="none" stroke="#4C1D95" stroke-width="3" stroke-linecap="round"/>
+<ellipse cx="64" cy="32" rx="28" ry="8" fill="#FFFFFF" stroke="#4C1D95" stroke-width="3"/>
+</symbol>
+<symbol id="plate" viewBox="0 0 128 128">
+<ellipse cx="64" cy="76" rx="52" ry="18" fill="#FFFFFF" stroke="#4C1D95" stroke-width="3"/>
+<ellipse cx="64" cy="76" rx="32" ry="10" fill="none" stroke="#4C1D95" stroke-width="3"/>
+</symbol>
+</svg>

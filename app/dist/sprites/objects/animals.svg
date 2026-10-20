@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+<symbol id="cat" viewBox="0 0 128 128">
+<path d="M40 96 L40 60 C40 40, 88 40, 88 60 L88 96 Z" fill="#F59E0B" stroke="#4C1D95" stroke-width="3"/>
+<path d="M45 45 L35 25 L60 40 Z" fill="#F59E0B" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M83 45 L93 25 L68 40 Z" fill="#F59E0B" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="52" cy="55" r="4" fill="#4C1D95"/>
+<circle cx="76" cy="55" r="4" fill="#4C1D95"/>
+<path d="M64 65 Q64 70 59 70 M64 65 Q64 70 69 70" fill="none" stroke="#4C1D95" stroke-width="2" stroke-linecap="round"/>
+<path d="M88 80 Q108 70 108 90" fill="none" stroke="#F59E0B" stroke-width="6" stroke-linecap="round"/>
+</symbol>
+<symbol id="duck" viewBox="0 0 128 128">
+<ellipse cx="64" cy="75" rx="35" ry="25" fill="#F59E0B" stroke="#4C1D95" stroke-width="3"/>
+<circle cx="85" cy="50" r="20" fill="#F59E0B" stroke="#4C1D95" stroke-width="3"/>
+<path d="M100 50 L115 55 L100 60 Z" fill="#F59E0B" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<circle cx="88" cy="45" r="3" fill="#4C1D95"/>
+<path d="M50 95 L40 110 L60 110 Z" fill="#E74C3C" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M78 95 L68 110 L88 110 Z" fill="#E74C3C" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+</symbol>
+<symbol id="stork" viewBox="0 0 128 128">
+<path d="M64 40 C50 40, 40 60, 50 80 C60 100, 80 100, 90 80 C100 60, 90 40, 64 40 Z" fill="#FFFFFF" stroke="#4C1D95" stroke-width="3"/>
+<path d="M64 40 C70 60, 80 80, 90 80 C100 80, 100 60, 90 40 Z" fill="#4C1D95" stroke="#4C1D95" stroke-width="3"/>
+<path d="M64 40 Q50 20 30 30 Q20 35 15 40" fill="none" stroke="#FFFFFF" stroke-width="12" stroke-linecap="round"/>
+<path d="M64 40 Q50 20 30 30 Q20 35 15 40" fill="none" stroke="#4C1D95" stroke-width="3" stroke-linecap="round"/>
+<path d="M15 40 L5 42" fill="none" stroke="#F59E0B" stroke-width="4" stroke-linecap="round"/>
+<path d="M55 95 L50 115 M75 95 L80 115" fill="none" stroke="#E74C3C" stroke-width="4" stroke-linecap="round"/>
+</symbol>
+<symbol id="donkey" viewBox="0 0 128 128">
+<path d="M35 95 L35 55 C35 35, 93 35, 93 55 L93 95 Z" fill="#9CA3AF" stroke="#4C1D95" stroke-width="3"/>
+<path d="M45 40 L40 15 L55 35 Z" fill="#9CA3AF" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M83 40 L88 15 L73 35 Z" fill="#9CA3AF" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<ellipse cx="64" cy="55" rx="15" ry="10" fill="#F472B6" stroke="#4C1D95" stroke-width="3"/>
+<circle cx="52" cy="45" r="3" fill="#4C1D95"/>
+<circle cx="76" cy="45" r="3" fill="#4C1D95"/>
+<path d="M45 95 L40 115 L55 115 Z" fill="#9CA3AF" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+<path d="M83 95 L88 115 L73 115 Z" fill="#9CA3AF" stroke="#4C1D95" stroke-width="3" stroke-linejoin="round"/>
+</symbol>
+</svg>
