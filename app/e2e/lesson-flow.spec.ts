@@ -46,17 +46,23 @@ test('полный сценарий demo-урока с восстановлен�
   await expect(startLink).toHaveText(/Начать занятие/);
   await startLink.click();
 
-  // первый шаг — «Дальше»
+  // demo-урок: 4 шага (instruction → picture-choice → offline-task → reflection).
+  // Проходим два шага «Дальше», чтобы lastStepId гарантированно был не последним
+  // шагом — иначе после reload урок авто-завершается и индикатора нет.
   await page.getByRole('button', { name: /Дальше/ }).click();
+  await page.getByRole('button', { name: /Дальше/ }).click();
+  await expect(page.getByTestId('step-indicator')).toHaveText(/^3 \/ 4$/);
+  // даём завершиться асинхронному persist() в IndexedDB перед перезагрузкой
+  await page.waitForTimeout(500);
 
   // перезагрузка: прогресс восстановлен — не первый шаг
   await page.reload();
   const indicator = page.getByTestId('step-indicator');
   await expect(indicator).toBeVisible({ timeout: 15_000 });
-  await expect(indicator).not.toHaveText(/^1 \/ /);
+  await expect(indicator).toHaveText(/^3 \/ 4$/);
 
   // доходим до конца
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 5; i++) {
     const next = page.getByRole('button', { name: /Дальше|Завершить/ });
     if (!(await next.isVisible().catch(() => false))) break;
     await next.click();

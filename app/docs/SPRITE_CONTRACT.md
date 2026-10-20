@@ -71,3 +71,7 @@ icon-blocks, icon-bowl, icon-cubes, icon-abacus, icon-sticks, icon-paper
 
 ## Порядок разрешения (src/core/sprites/resolver.ts)
 overrides модуля → библиотека ядра (SPRITE_MANIFEST) → assets модуля → null (missing-placeholder + warn).
+
+## Статус спрайт-листов (Этап 4.6)
+
+Спрайт-листы восстановлены в Этапах 4.5–4.6 (исходная история утрачена — репозиторий grafted); id и viewBox соответствуют манифесту на момент 4.6.
