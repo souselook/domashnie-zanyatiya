@@ -1,3 +1,4 @@
-.tmpbuild/
+dist/
 node_modules/
 test-results/
+.vite/

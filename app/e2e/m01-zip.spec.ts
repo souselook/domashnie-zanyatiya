@@ -40,15 +40,16 @@ test('урок 1 (w1d1) открывается и проходится end-to-en
   await expect(startLink).toHaveText(/Начать занятие/);
   await startLink.click();
   // плеер: проходим шаги кнопкой «Дальше» (instruction/offline — тап), picture-choice/count — клик по варианту
+  const finished = page.getByRole('heading', { name: /Занятие окончено/ });
   for (let step = 0; step < 30; step++) {
-    if (await page.getByText(/Урок пройден|Занятие завершено|Рефлексия/i).last().isVisible().catch(() => false)) break;
+    if (await finished.isVisible().catch(() => false)) break;
     const next = page.getByRole('button', { name: /Дальше|Готово|Завершить/ });
     if (await next.first().isEnabled().catch(() => false)) { await next.first().click(); continue; }
     const opt = page.locator('[data-testid*="option"], button[role="radio"]').first();
     if (await opt.isVisible().catch(() => false)) { await opt.click(); continue; }
     break;
   }
-  await expect(page.getByTestId('player-next'), 'плеер дошёл до конца шагов').toBeVisible();
+  await expect(finished, 'урок пройден end-to-end').toBeVisible({ timeout: 15_000 });
 });
 
 test('smoke: все 12 уроков открываются (страницы интро)', async ({ page }) => {
@@ -60,7 +61,7 @@ test('smoke: все 12 уроков открываются (страницы и�
   const files = ['w1d1-sort-by-color','w1d2-count-1-3','w1d3-vowels-a-u-o','w2d1-number-4','w2d2-slog-ma','w2d3-abacus-intro','w3d1-big-small','w3d2-number-5','w3d3-slogi-sa-pa-ma','w4d1-plus','w4d2-two-features','w4d3-month-quest'];
   let opened = 0;
   for (const f of files) {
-    await page.goto(`/#/lesson/m01-start-3-4/${f}/start`);
+    await page.goto(`/#/lesson/m01-start-3-4/${encodeURIComponent(`lessons/${f}.json`)}/start`);
     const heading = page.locator('h1');
     if (await heading.first().isVisible({ timeout: 5000 }).catch(() => false)) opened++;
   }

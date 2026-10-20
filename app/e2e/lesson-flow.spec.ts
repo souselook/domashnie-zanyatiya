@@ -18,7 +18,15 @@ test('полный сценарий demo-урока с восстановлен�
     await Promise.all(keys.map((k) => caches.delete(k)));
   });
 
+  // seed-модули скрыты по умолчанию — включаем переключатель «Показать демо-модули»
   await page.goto('/#/');
+  const emptyState = page.getByTestId('empty-state');
+  if (await emptyState.isVisible().catch(() => false)) {
+    await page.getByTestId('show-seeds-link').click();
+  } else {
+    const toggle = page.getByTestId('toggle-seeds').locator('input');
+    if (!(await toggle.isChecked())) await toggle.check({ force: true });
+  }
   await expect(page.getByText('Проверка ядра (демо)')).toBeVisible();
 
   await page.getByRole('link', { name: /Проверка ядра/ }).click();
