@@ -127,3 +127,20 @@ describe('Этап 4: модуль 1 на scene', () => {
     }
   });
 });
+
+// ─── Этап 4.5: additive-покрытие scale в уроках ───
+describe('scale в уроках m01 (поле схемы, не теряется при round-trip)', () => {
+  it('уроки содержат слои со scale != 1 и они проходят lessonSchema', () => {
+    let nonOne = 0;
+    for (const lesson of LESSONS) {
+      lessonSchema.parse(lesson); // схема не роняет scale
+      for (const step of lesson.steps as Record<string, unknown>[]) {
+        const sc = step.scene as Scene | undefined;
+        for (const l of sc?.layers ?? []) if (l.scale !== undefined && l.scale !== 1) nonOne++;
+        for (const opt of (step.options as { scene?: Scene }[] | undefined) ?? [])
+          for (const l of opt.scene?.layers ?? []) if (l.scale !== undefined && l.scale !== 1) nonOne++;
+      }
+    }
+    expect(nonOne).toBeGreaterThan(0);
+  });
+});

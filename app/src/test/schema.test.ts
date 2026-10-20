@@ -108,3 +108,18 @@ describe('lessonSchema', () => {
     }).success).toBe(false);
   });
 });
+
+// ─── Этап 4.5: additive-покрытие контракта загрузчика ───
+describe('requiredSprites по умолчанию (контракт: пустой массив)', () => {
+  it('манифест без requiredSprites нормализуется в []', async () => {
+    const { manifestSchema } = await import('../core/schema/index');
+    const base = {
+      manifestVersion: 1, apiVersion: 1, minCoreVersion: '1.0.0',
+      id: 'test-mod', title: 'Тест', shortDescription: 'т', author: 'a', license: 'MIT',
+      ageRange: { from: 3, to: 4 }, discipline: 'demo',
+      lessons: [{ file: 'lessons/l1.json', order: 1 }],
+    };
+    const parsed = manifestSchema.parse(base);
+    expect(parsed.requiredSprites).toEqual([]);
+  });
+});
