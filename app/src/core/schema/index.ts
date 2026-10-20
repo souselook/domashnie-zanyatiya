@@ -50,7 +50,8 @@ export const manifestSchema = z.object({
   discipline: z.enum(['demo', 'reading', 'math', 'logic', 'world', 'speech', 'art', 'other']),
   cover: relPath.optional(),
   // Новое (решение 4 сверх спеки): плоский список спрайт-ссылок, нужных модулю.
-  requiredSprites: z.array(z.string()).optional(),
+  // Контракт загрузчика: по умолчанию — пустой массив (не undefined).
+  requiredSprites: z.array(z.string()).optional().default([]),
   usesOwnAssets: z.boolean().optional(),
   lessons: z.array(z.object({
     file: relPath,
@@ -122,6 +123,8 @@ export const countSchema = z.object({
     // новая форма: спрайт предметов + repeat (предпочтительна)
     sprite: z.string().optional(),
     props: z.record(z.string()).optional(),
+    // опциональный множитель размера предмета (как layer.scale); по умолчанию 1.0
+    scale: z.number().positive().min(0.1).max(5).optional(),
   }),
   answer: z.number().int().min(1).max(10),
 });

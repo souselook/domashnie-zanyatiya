@@ -1,0 +1,15 @@
+{
+  "apiVersion": 1,
+  "modules": [
+    {
+      "id": "demo-core-check",
+      "path": "demo-core-check/",
+      "enabled": true
+    },
+    {
+      "id": "broken-demo",
+      "path": "broken-demo/",
+      "enabled": false
+    }
+  ]
+}

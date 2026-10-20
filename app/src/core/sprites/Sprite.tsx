@@ -10,8 +10,10 @@ import { MISSING_PLACEHOLDER_REF } from '../scene/legacy';
 import { log } from '../log';
 
 export interface SpriteProps {
-  /** Ссылка на спрайт: `<категория>/<файл>#<symbol-id>` или ассет модуля. */
-  ref: string;
+  /** Ссылка на спрайт: `<категория>/<файл>#<symbol-id>` или ассет модуля.
+   *  Названа spriteRef, а не ref: у React-компонентов prop `ref` зарезервирован
+   *  под string-refs (падает в тестах с react-test-renderer/строгими рендерами). */
+  spriteRef: string;
   /** Параметры символа (например, { color: 'red' }) → выбор варианта. */
   props?: Record<string, string>;
   /** Модуль, для которого резолвим (overrides + assets). */
@@ -27,8 +29,8 @@ export interface SpriteProps {
 
 const PLACEHOLDER = resolveSprite(MISSING_PLACEHOLDER_REF);
 
-export function Sprite({ ref, props, moduleId, moduleAssets, alt = '', size = 64, className }: SpriteProps) {
-  const variantRef = resolveVariant(ref, props);
+export function Sprite({ spriteRef, props, moduleId, moduleAssets, alt = '', size = 64, className }: SpriteProps) {
+  const variantRef = resolveVariant(spriteRef, props);
   const resolved: ResolvedSprite | null = resolveSprite(variantRef, { moduleId, moduleAssets });
   const [ready, setReady] = useState<boolean>(() => resolved?.source !== 'library');
 
@@ -50,7 +52,7 @@ export function Sprite({ ref, props, moduleId, moduleAssets, alt = '', size = 64
   }, [resolved]);
 
   if (!resolved) {
-    log.warn(`Спрайт «${ref}» не найден (overrides → библиотека → assets модуля) — показана заглушка`);
+    log.warn(`Спрайт «${spriteRef}» не найден (overrides → библиотека → assets модуля) — показана заглушка`);
     return <PlaceholderSprite alt={alt} size={size} className={className} />;
   }
 
@@ -58,7 +60,7 @@ export function Sprite({ ref, props, moduleId, moduleAssets, alt = '', size = 64
 
   if (resolved.source === 'module-asset') {
     // Ассет целиком как <img> — символы из него недоступны через <use> без инлайна.
-    return <img src={resolved.url} alt={alt} style={{ ...dims, objectFit: 'contain' }} className={className} data-sprite-ref={ref} />;
+    return <img src={resolved.url} alt={alt} style={{ ...dims, objectFit: 'contain' }} className={className} data-sprite-ref={spriteRef} />;
   }
 
   if (!resolved.symbolId || !ready) {
@@ -67,14 +69,14 @@ export function Sprite({ ref, props, moduleId, moduleAssets, alt = '', size = 64
       return <PlaceholderSprite alt={alt} size={size} className={className} />;
     }
     return (
-      <svg {...dims} role="img" aria-label={alt} className={className} data-sprite-ref={ref}>
+      <svg {...dims} role="img" aria-label={alt} className={className} data-sprite-ref={spriteRef}>
         <image href={resolved.url} width="100%" height="100%" preserveAspectRatio="xMidYMid meet" />
       </svg>
     );
   }
 
   return (
-    <svg {...dims} role={alt ? 'img' : undefined} aria-label={alt || undefined} aria-hidden={alt ? undefined : true} className={className} data-sprite-ref={ref} data-sprite-source={resolved.source}>
+    <svg {...dims} role={alt ? 'img' : undefined} aria-label={alt || undefined} aria-hidden={alt ? undefined : true} className={className} data-sprite-ref={spriteRef} data-sprite-source={resolved.source}>
       <use href={`${resolved.url}#${resolved.symbolId}`} />
     </svg>
   );

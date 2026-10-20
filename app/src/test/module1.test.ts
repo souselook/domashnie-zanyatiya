@@ -87,9 +87,19 @@ describe('Этап 4: модуль 1 на scene', () => {
   it('манифест проходит схему; requiredSprites собран из фактических сцен', () => {
     const m = manifestSchema.parse(buildManifest());
     expect(m.requiredSprites.length).toBeGreaterThan(10);
-    expect(m.requiredSprites).toContain('objects/fruits#apple');
+    expect(m.requiredSprites).toContain('objects/fruits#apple-red'); // урок 2 (счёт 1–3): фактическая ссылка
+    expect(m.requiredSprites).toContain('objects/fruits#apple-green');
     expect(m.requiredSprites).toContain('letters/cyrillic-upper#letter-А');
     expect(m.requiredSprites.every((r) => !r.startsWith('character/luntic'))).toBe(true); // персонаж — не слой
+    // requiredSprites в манифесте = ровно множество ссынок, собранных из слоёв всех шагов
+    expect(m.requiredSprites).toEqual(collectRefs());
+  });
+
+  it('manifestSchema нормализует отсутствующий requiredSprites в []', () => {
+    const base = buildManifest() as Record<string, unknown>;
+    delete base.requiredSprites;
+    const m = manifestSchema.parse(base);
+    expect(m.requiredSprites).toEqual([]);
   });
 
   it('zip проходит реальный парсер UI (parseModuleZip) без ошибок', () => {

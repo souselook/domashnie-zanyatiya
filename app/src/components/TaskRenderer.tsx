@@ -39,6 +39,7 @@ function OptionImage({ moduleId, step, resolveAssetSrc }: {
       <SceneView
         scene={scene}
         height={80}
+        moduleId={moduleId}
         resolveAsset={(rel) => resolveAssetSrc?.(rel)}
       />
     );
@@ -82,12 +83,13 @@ export interface TaskViewProps {
 }
 
 /** Визуальная часть шага: scene (или legacy asset) над контентом задания. */
-function StepVisual({ step, resolveAssetSrc }: Pick<TaskViewProps, 'step'> & Pick<TaskViewProps, 'resolveAssetSrc'>) {
+function StepVisual({ step, moduleId, resolveAssetSrc }: Pick<TaskViewProps, 'step' | 'moduleId'> & Pick<TaskViewProps, 'resolveAssetSrc'>) {
   const scene = stepScene(step);
   if (!scene) return null;
   return (
     <SceneView
       scene={scene}
+      moduleId={moduleId}
       resolveAsset={(ref) => {
         // этап 2: спрайтовой библиотеки нет — sprite-ref вида "objects/fruits#apple"
         // пробуем резолвить как путь файла ассета модуля ("objects/fruits.svg")
@@ -214,7 +216,7 @@ export default function TaskRenderer(props: TaskViewProps & {
   notes?: string; onNotes?: (v: string) => void;
 }) {
   const { step } = props;
-  const visual = <StepVisual step={step} resolveAssetSrc={props.resolveAssetSrc} />;
+  const visual = <StepVisual step={step} moduleId={props.moduleId} resolveAssetSrc={props.resolveAssetSrc} />;
   switch (step.type) {
     case 'instruction': return <>{visual}<InstructionView /></>;
     case 'picture-choice': return <>{visual}<PictureChoiceView {...props} step={step} readOnly={!!props.readOnly} resolveAssetSrc={props.resolveAssetSrc} /></>;

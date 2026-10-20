@@ -1,0 +1,14 @@
+{
+  "lessonVersion": 1,
+  "id": "bad-lesson",
+  "moduleId": "broken-demo",
+  "title": "Урок с неизвестным типом шага",
+  "steps": [
+    {
+      "id": "x1",
+      "type": "laser-show",
+      "mode": "child",
+      "parentScript": "Этот шаг использует тип «laser-show», которого нет в ядре v1."
+    }
+  ]
+}

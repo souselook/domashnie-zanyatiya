@@ -26,7 +26,9 @@ export const sceneLayerSchema = z.object({
     x: z.number().min(0).max(100),
     y: z.number().min(0).max(100),
   }),
-  scale: z.number().min(0.1).max(5).default(1),
+  // Опциональный множитель к базовому размеру слоя (BASE_ITEM_PCT).
+  // По умолчанию 1.0; в TypeScript-типе — optional (Zod подставляет default при parse).
+  scale: z.number().positive().min(0.1).max(5).optional().default(1),
   repeat: sceneRepeatSchema.optional(),
   props: z.record(z.string()).optional(),
 });

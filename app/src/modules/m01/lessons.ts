@@ -36,8 +36,8 @@ export const LESSONS: Lesson[] = [
         scene: {
           background: 'soft-lilac',
           layers: [
-            { sprite: 'objects/flowers#petal-red', at: { x: 35, y: 60 }, repeat: { count: 3, layout: 'row', gap: 12 } },
-            { sprite: 'objects/flowers#petal-blue', at: { x: 68, y: 60 }, repeat: { count: 3, layout: 'row', gap: 12 } },
+            { sprite: 'objects/flowers#petal-red', at: { x: 35, y: 60 }, repeat: { count: 3, layout: 'row', gap: 12 }, scale: 1 },
+            { sprite: 'objects/flowers#petal-blue', at: { x: 68, y: 60 }, repeat: { count: 3, layout: 'row', gap: 12 }, scale: 1 },
           ],
           character: { emotion: 'hello', gesture: 'wave', anchor: { x: 50, y: 28 } },
         },
@@ -62,7 +62,7 @@ export const LESSONS: Lesson[] = [
         options: [
           { id: 'red', label: 'Красный лепесток', alt: 'Красный лепесток', correct: true,
             scene: { layers: [{ sprite: 'objects/flowers#petal-red', at: { x: 50, y: 50 }, scale: 1.6 }] } },
-          { id: 'blue', label: 'Синий лепесток', alt: 'Синий лепесток', correct: false, alt: 'Синий лепесток',
+          { id: 'blue', label: 'Синий лепесток', alt: 'Синий лепесток', correct: false,
             scene: { layers: [{ sprite: 'objects/flowers#petal-blue', at: { x: 50, y: 50 }, scale: 1.6 }] } },
         ],
       },
@@ -78,7 +78,7 @@ export const LESSONS: Lesson[] = [
         scene: {
           background: 'white',
           layers: [
-            { sprite: 'objects/flowers#petal-red', at: { x: 50, y: 55 }, repeat: { count: 3, layout: 'row', gap: 15 } },
+            { sprite: 'objects/flowers#petal-red', at: { x: 50, y: 55 }, repeat: { count: 3, layout: 'row', gap: 15 }, scale: 1 },
           ],
         },
       },
@@ -115,9 +115,9 @@ export const LESSONS: Lesson[] = [
           background: 'soft-lilac',
           layers: [
             { sprite: 'objects/dishes#bowl', at: { x: 50, y: 70 }, scale: 1.6 },
-            { sprite: 'objects/fruits#apple-red', at: { x: 35, y: 45 } },
-            { sprite: 'objects/fruits#apple-green', at: { x: 50, y: 42 } },
-            { sprite: 'objects/fruits#apple-red', at: { x: 65, y: 45 } },
+            { sprite: 'objects/fruits#apple-red', at: { x: 35, y: 45 }, scale: 1 },
+            { sprite: 'objects/fruits#apple-green', at: { x: 50, y: 42 }, scale: 1 },
+            { sprite: 'objects/fruits#apple-red', at: { x: 65, y: 45 }, scale: 1 },
           ],
           character: { emotion: 'ask', gesture: 'rest', anchor: { x: 82, y: 45 } },
         },
@@ -135,7 +135,7 @@ export const LESSONS: Lesson[] = [
           background: 'white',
           layers: [
             { sprite: 'objects/dishes#bowl', at: { x: 50, y: 70 }, scale: 1.6 },
-            { sprite: 'objects/fruits#apple-red', at: { x: 50, y: 45 }, repeat: { count: 3, layout: 'row', gap: 12 } },
+            { sprite: 'objects/fruits#apple-red', at: { x: 50, y: 45 }, repeat: { count: 3, layout: 'row', gap: 12 }, scale: 1 },
           ],
         },
       },
@@ -195,9 +195,9 @@ export const LESSONS: Lesson[] = [
             { sprite: 'letters/cyrillic-upper#letter-А', at: { x: 22, y: 40 }, scale: 1.2 },
             { sprite: 'letters/cyrillic-upper#letter-У', at: { x: 50, y: 40 }, scale: 1.2 },
             { sprite: 'letters/cyrillic-upper#letter-О', at: { x: 78, y: 40 }, scale: 1.2 },
-            { sprite: 'objects/animals#stork', at: { x: 22, y: 72 } },
-            { sprite: 'objects/animals#duck', at: { x: 50, y: 72 } },
-            { sprite: 'objects/animals#donkey', at: { x: 78, y: 72 } },
+            { sprite: 'objects/animals#stork', at: { x: 22, y: 72 }, scale: 1 },
+            { sprite: 'objects/animals#duck', at: { x: 50, y: 72 }, scale: 1 },
+            { sprite: 'objects/animals#donkey', at: { x: 78, y: 72 }, scale: 1 },
           ],
           character: { emotion: 'hello', gesture: 'wave', anchor: { x: 50, y: 15 } },
         },
@@ -224,7 +224,7 @@ export const LESSONS: Lesson[] = [
         parentScript:
           'Прочитайте: «У-У-У, как крякает уточка». Попросите ребёнка найти букву У среди двух. Нажмите вместе.',
         options: [
-          { id: 'o', label: 'Буква О', alt: 'Большая буква О', correct: false, correct: false,
+          { id: 'o', label: 'Буква О', alt: 'Большая буква О', correct: false,
             scene: { layers: [{ sprite: 'letters/cyrillic-upper#letter-О', at: { x: 50, y: 50 }, scale: 1.8 }] } },
           { id: 'u', label: 'Буква У', alt: 'Большая буква У', correct: true,
             scene: { layers: [{ sprite: 'letters/cyrillic-upper#letter-У', at: { x: 50, y: 50 }, scale: 1.8 }] } },
@@ -267,10 +267,10 @@ export const LESSONS: Lesson[] = [
         scene: {
           background: 'soft-lilac',
           layers: [
-            { sprite: 'cubes/zaytsev#cube-gold', at: { x: 40, y: 78 } },
-            { sprite: 'cubes/zaytsev#cube-blue', at: { x: 40, y: 62 } },
-            { sprite: 'cubes/zaytsev#cube-green', at: { x: 40, y: 46 } },
-            { sprite: 'cubes/zaytsev#cube-gray', at: { x: 40, y: 30 } },
+            { sprite: 'cubes/zaytsev#cube-gold', at: { x: 40, y: 78 }, scale: 1 },
+            { sprite: 'cubes/zaytsev#cube-blue', at: { x: 40, y: 62 }, scale: 1 },
+            { sprite: 'cubes/zaytsev#cube-green', at: { x: 40, y: 46 }, scale: 1 },
+            { sprite: 'cubes/zaytsev#cube-gray', at: { x: 40, y: 30 }, scale: 1 },
           ],
           character: { emotion: 'think', gesture: 'reach', anchor: { x: 72, y: 45 } },
         },
@@ -287,7 +287,7 @@ export const LESSONS: Lesson[] = [
         scene: {
           background: 'white',
           layers: [
-            { sprite: 'cubes/zaytsev#cube-gold', at: { x: 50, y: 55 }, repeat: { count: 4, layout: 'row', gap: 12 } },
+            { sprite: 'cubes/zaytsev#cube-gold', at: { x: 50, y: 55 }, repeat: { count: 4, layout: 'row', gap: 12 }, scale: 1 },
           ],
         },
       },
@@ -300,9 +300,9 @@ export const LESSONS: Lesson[] = [
         scene: {
           background: 'white',
           layers: [
-            { sprite: 'cubes/zaytsev#cube-blue', at: { x: 28, y: 55 }, repeat: { count: 2, layout: 'row', gap: 8 } },
+            { sprite: 'cubes/zaytsev#cube-blue', at: { x: 28, y: 55 }, repeat: { count: 2, layout: 'row', gap: 8 }, scale: 1 },
             { sprite: 'symbols/math#plus', at: { x: 50, y: 55 }, scale: 0.8 },
-            { sprite: 'cubes/zaytsev#cube-green', at: { x: 72, y: 55 }, repeat: { count: 2, layout: 'row', gap: 8 } },
+            { sprite: 'cubes/zaytsev#cube-green', at: { x: 72, y: 55 }, repeat: { count: 2, layout: 'row', gap: 8 }, scale: 1 },
           ],
         },
       },
@@ -433,7 +433,7 @@ export const LESSONS: Lesson[] = [
         scene: {
           background: 'white',
           layers: [
-            { sprite: 'objects/shapes#circle-blue', at: { x: 50, y: 55 }, repeat: { count: 3, layout: 'row', gap: 12 } },
+            { sprite: 'objects/shapes#circle-blue', at: { x: 50, y: 55 }, repeat: { count: 3, layout: 'row', gap: 12 }, scale: 1 },
           ],
         },
       },
@@ -488,7 +488,7 @@ export const LESSONS: Lesson[] = [
         options: [
           { id: 'big', label: 'Большой круг', alt: 'Большой красный круг', correct: true,
             scene: { layers: [{ sprite: 'objects/shapes#circle-red', at: { x: 50, y: 50 }, scale: 2.2 }] } },
-          { id: 'small', label: 'Маленький круг', alt: 'Маленький красный круг', correct: false, alt: 'Маленький красный круг',
+          { id: 'small', label: 'Маленький круг', alt: 'Маленький красный круг', correct: false,
             scene: { layers: [{ sprite: 'objects/shapes#circle-red', at: { x: 50, y: 50 }, scale: 0.6 }] } },
         ],
       },
@@ -501,7 +501,7 @@ export const LESSONS: Lesson[] = [
         options: [
           { id: 'small', label: 'Маленький квадрат', alt: 'Маленький синий квадрат', correct: true,
             scene: { layers: [{ sprite: 'objects/shapes#square-blue', at: { x: 50, y: 50 }, scale: 0.6 }] } },
-          { id: 'big', label: 'Большой квадрат', alt: 'Большой синий квадрат', correct: false, alt: 'Большой синий квадрат',
+          { id: 'big', label: 'Большой квадрат', alt: 'Большой синий квадрат', correct: false,
             scene: { layers: [{ sprite: 'objects/shapes#square-blue', at: { x: 50, y: 50 }, scale: 2.2 }] } },
         ],
       },
@@ -561,7 +561,7 @@ export const LESSONS: Lesson[] = [
         scene: {
           background: 'white',
           layers: [
-            { sprite: 'icons/materials#icon-sticks', at: { x: 50, y: 55 }, repeat: { count: 5, layout: 'grid', gap: 8 } },
+            { sprite: 'icons/materials#icon-sticks', at: { x: 50, y: 55 }, repeat: { count: 5, layout: 'grid', gap: 8 }, scale: 1 },
           ],
         },
       },
@@ -622,9 +622,9 @@ export const LESSONS: Lesson[] = [
             { sprite: 'letters/cyrillic-upper#letter-А', at: { x: 62, y: 35 }, scale: 1.1 },
             { sprite: 'letters/cyrillic-upper#letter-М', at: { x: 78, y: 35 }, scale: 1.1 },
             { sprite: 'letters/cyrillic-upper#letter-А', at: { x: 90, y: 35 }, scale: 1.1 },
-            { sprite: 'objects/shapes#triangle-blue', at: { x: 26, y: 70 } },
-            { sprite: 'objects/flowers#flower-simple', at: { x: 56, y: 70 } },
-            { sprite: 'objects/animals#donkey', at: { x: 84, y: 70 } },
+            { sprite: 'objects/shapes#triangle-blue', at: { x: 26, y: 70 }, scale: 1 },
+            { sprite: 'objects/flowers#flower-simple', at: { x: 56, y: 70 }, scale: 1 },
+            { sprite: 'objects/animals#donkey', at: { x: 84, y: 70 }, scale: 1 },
           ],
           character: { emotion: 'ask', gesture: 'rest', anchor: { x: 12, y: 70 } },
         },
@@ -699,10 +699,10 @@ export const LESSONS: Lesson[] = [
         scene: {
           background: 'soft-lilac',
           layers: [
-            { sprite: 'objects/animals#duck', at: { x: 22, y: 60 } },
-            { sprite: 'objects/animals#duck', at: { x: 38, y: 60 } },
+            { sprite: 'objects/animals#duck', at: { x: 22, y: 60 }, scale: 1 },
+            { sprite: 'objects/animals#duck', at: { x: 38, y: 60 }, scale: 1 },
             { sprite: 'symbols/math#plus', at: { x: 52, y: 60 }, scale: 0.8 },
-            { sprite: 'objects/animals#cat', at: { x: 68, y: 60 } },
+            { sprite: 'objects/animals#cat', at: { x: 68, y: 60 }, scale: 1 },
             { sprite: 'symbols/math#equals', at: { x: 80, y: 60 }, scale: 0.8 },
             { sprite: 'numbers/digits#digit-3', at: { x: 91, y: 60 }, scale: 1.1 },
           ],
@@ -720,9 +720,9 @@ export const LESSONS: Lesson[] = [
         scene: {
           background: 'white',
           layers: [
-            { sprite: 'objects/animals#duck', at: { x: 35, y: 55 } },
-            { sprite: 'objects/animals#duck', at: { x: 50, y: 55 } },
-            { sprite: 'objects/animals#cat', at: { x: 65, y: 55 } },
+            { sprite: 'objects/animals#duck', at: { x: 35, y: 55 }, scale: 1 },
+            { sprite: 'objects/animals#duck', at: { x: 50, y: 55 }, scale: 1 },
+            { sprite: 'objects/animals#cat', at: { x: 65, y: 55 }, scale: 1 },
           ],
         },
       },
@@ -762,9 +762,9 @@ export const LESSONS: Lesson[] = [
         scene: {
           background: 'soft-lilac',
           layers: [
-            { sprite: 'objects/shapes#circle-red', at: { x: 28, y: 55 } },
-            { sprite: 'objects/shapes#circle-blue', at: { x: 48, y: 55 } },
-            { sprite: 'objects/shapes#square-red', at: { x: 68, y: 55 } },
+            { sprite: 'objects/shapes#circle-red', at: { x: 28, y: 55 }, scale: 1 },
+            { sprite: 'objects/shapes#circle-blue', at: { x: 48, y: 55 }, scale: 1 },
+            { sprite: 'objects/shapes#square-red', at: { x: 68, y: 55 }, scale: 1 },
           ],
           character: { emotion: 'think', gesture: 'rest', anchor: { x: 50, y: 22 } },
         },
@@ -779,9 +779,9 @@ export const LESSONS: Lesson[] = [
         options: [
           { id: 'rc', label: 'Красный круг', alt: 'Круг красного цвета', correct: true,
             scene: { layers: [{ sprite: 'objects/shapes#circle-red', at: { x: 50, y: 50 }, scale: 1.6 }] } },
-          { id: 'bc', label: 'Синий круг', alt: 'Круг синего цвета', correct: false, alt: 'Круг синего цвета',
+          { id: 'bc', label: 'Синий круг', alt: 'Круг синего цвета', correct: false,
             scene: { layers: [{ sprite: 'objects/shapes#circle-blue', at: { x: 50, y: 50 }, scale: 1.6 }] } },
-          { id: 'rs', label: 'Красный квадрат', alt: 'Квадрат красного цвета', correct: false, alt: 'Квадрат красного цвета',
+          { id: 'rs', label: 'Красный квадрат', alt: 'Квадрат красного цвета', correct: false,
             scene: { layers: [{ sprite: 'objects/shapes#square-red', at: { x: 50, y: 50 }, scale: 1.6 }] } },
         ],
       },
@@ -841,7 +841,7 @@ export const LESSONS: Lesson[] = [
             scene: { layers: [{ sprite: 'letters/cyrillic-upper#letter-К', at: { x: 50, y: 50 }, scale: 1.8 }] } },
           { id: 't', label: 'Буква Т', alt: 'Большая буква Т', correct: false,
             scene: { layers: [{ sprite: 'letters/cyrillic-upper#letter-Т', at: { x: 50, y: 50 }, scale: 1.8 }] } },
-          { id: 'o', label: 'Буква О', alt: 'Большая буква О', correct: false, correct: false,
+          { id: 'o', label: 'Буква О', alt: 'Большая буква О', correct: false,
             scene: { layers: [{ sprite: 'letters/cyrillic-upper#letter-О', at: { x: 50, y: 50 }, scale: 1.8 }] } },
         ],
       },
@@ -882,8 +882,8 @@ export const LESSONS: Lesson[] = [
         scene: {
           background: 'soft-lilac',
           layers: [
-            { sprite: 'objects/flowers#flower-simple', at: { x: 25, y: 70 } },
-            { sprite: 'objects/flowers#flower-simple', at: { x: 75, y: 70 } },
+            { sprite: 'objects/flowers#flower-simple', at: { x: 25, y: 70 }, scale: 1 },
+            { sprite: 'objects/flowers#flower-simple', at: { x: 75, y: 70 }, scale: 1 },
           ],
           character: { emotion: 'happy', gesture: 'up', anchor: { x: 50, y: 45 } },
         },

@@ -1,0 +1,68 @@
+{
+  "lessonVersion": 1,
+  "id": "demo-tasks",
+  "moduleId": "demo-core-check",
+  "title": "Урок 2. Проверка всех типов заданий",
+  "estimatedMinutes": 5,
+  "tips": [
+    "Демо-урок проходит по всем типам заданий ядра v1: счёт, сопоставление, выбор по признаку, обводка."
+  ],
+  "materials": [
+    { "name": "Карточки (или нарисованные кружки)", "icon": "cards" }
+  ],
+  "steps": [
+    {
+      "id": "t1",
+      "type": "count",
+      "mode": "child",
+      "parentScript": "Помогите ребёнку посчитать звёздочки на экране вслух, от одного до пяти. Пусть он сам нажмёт нужное число.",
+      "prompt": "Сколько звёздочек?",
+      "items": { "kind": "star", "color": "#E8A13C", "count": 5 },
+      "answer": 5
+    },
+    {
+      "id": "t2",
+      "type": "match",
+      "mode": "child",
+      "parentScript": "Найдите вместе пары: картинка слева и подходящая справа.",
+      "prompt": "Найди пары",
+      "pairs": [
+        { "left": { "id": "l1", "label": "Кошка" }, "right": { "id": "r1", "label": "Мяу" } },
+        { "left": { "id": "l2", "label": "Собака" }, "right": { "id": "r2", "label": "Гав" } }
+      ]
+    },
+    {
+      "id": "t3",
+      "type": "feature-choice",
+      "mode": "child",
+      "parentScript": "Спросите: какой из этих предметов красный? Ребёнок пусть нажмёт кнопку.",
+      "prompt": "Что красного цвета?",
+      "feature": "красный цвет",
+      "options": [
+        { "id": "f1", "label": "Яблоко", "hasFeature": true },
+        { "id": "f2", "label": "Огурец", "hasFeature": false },
+        { "id": "f3", "label": "Небо", "hasFeature": false },
+        { "id": "f4", "label": "Помидор", "hasFeature": true }
+      ]
+    },
+    {
+      "id": "t4",
+      "type": "trace-point",
+      "mode": "child",
+      "parentScript": "Распечатайте или нарисуйте на листке дорожку. Дайте ребёнку обвести её пальцем, а затем карандашом.",
+      "prompt": "Обведи дорожку пальчиком",
+      "image": "assets/trace.svg",
+      "alt": "Извилистая дорожка для обводки",
+      "offlineAction": "Обвести дорожку на листке карандашом"
+    },
+    {
+      "id": "t5",
+      "type": "reflection",
+      "mode": "parent",
+      "parentScript": "Спросите ребёнка, какие задания понравились больше всего, и запишите пару слов.",
+      "questions": [
+        "Какое задание понравилось больше всего?"
+      ]
+    }
+  ]
+}
