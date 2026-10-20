@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <symbol id="apple-red" viewBox="0 0 128 128">
+    <path d="M64 25 C75 25, 80 35, 95 45 C110 55, 115 75, 105 95 C95 115, 75 115, 64 110 C53 115, 33 115, 23 95 C13 75, 18 55, 33 45 C48 35, 53 25, 64 25 Z" fill="#E74C3C" stroke="#4C1D95" stroke-width="3"/>
+    <path d="M64 25 Q64 15 70 10" fill="none" stroke="#8B5A2B" stroke-width="3" stroke-linecap="round"/>
+    <path d="M64 25 Q75 20 80 30 Q70 35 64 25 Z" fill="#2ECC71" stroke="#4C1D95" stroke-width="3"/>
+    <ellipse cx="45" cy="50" rx="8" ry="12" fill="#FFFFFF" transform="rotate(-30 45 50)"/>
+  </symbol>
+  <symbol id="apple-green" viewBox="0 0 128 128">
+    <path d="M64 25 C75 25, 80 35, 95 45 C110 55, 115 75, 105 95 C95 115, 75 115, 64 110 C53 115, 33 115, 23 95 C13 75, 18 55, 33 45 C48 35, 53 25, 64 25 Z" fill="#2ECC71" stroke="#4C1D95" stroke-width="3"/>
+    <path d="M64 25 Q64 15 70 10" fill="none" stroke="#8B5A2B" stroke-width="3" stroke-linecap="round"/>
+    <path d="M64 25 Q75 20 80 30 Q70 35 64 25 Z" fill="#2ECC71" stroke="#4C1D95" stroke-width="3"/>
+    <ellipse cx="45" cy="50" rx="8" ry="12" fill="#FFFFFF" transform="rotate(-30 45 50)"/>
+  </symbol>
+  <symbol id="pear" viewBox="0 0 128 128">
+    <path d="M64 20 C72 20, 78 28, 78 40 C78 55, 95 60, 100 80 C105 100, 95 115, 64 115 C33 115, 23 100, 28 80 C33 60, 50 55, 50 40 C50 28, 56 20, 64 20 Z" fill="#F59E0B" stroke="#4C1D95" stroke-width="3"/>
+    <path d="M64 20 Q64 10 70 5" fill="none" stroke="#8B5A2B" stroke-width="3" stroke-linecap="round"/>
+    <path d="M64 20 Q75 15 80 25 Q70 30 64 20 Z" fill="#2ECC71" stroke="#4C1D95" stroke-width="3"/>
+    <ellipse cx="45" cy="85" rx="6" ry="10" fill="#FFFFFF" transform="rotate(-20 45 85)"/>
+  </symbol>
+  <symbol id="cherry-pair" viewBox="0 0 128 128">
+    <path d="M64 15 Q50 40 45 65" fill="none" stroke="#2ECC71" stroke-width="3" stroke-linecap="round"/>
+    <path d="M64 15 Q78 40 83 65" fill="none" stroke="#2ECC71" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="45" cy="75" r="18" fill="#E74C3C" stroke="#4C1D95" stroke-width="3"/>
+    <circle cx="83" cy="75" r="18" fill="#E74C3C" stroke="#4C1D95" stroke-width="3"/>
+    <ellipse cx="38" cy="68" rx="4" ry="6" fill="#FFFFFF" transform="rotate(-30 38 68)"/>
+    <ellipse cx="76" cy="68" rx="4" ry="6" fill="#FFFFFF" transform="rotate(-30 76 68)"/>
+  </symbol>
+</svg>
