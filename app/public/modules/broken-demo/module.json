@@ -1,0 +1,15 @@
+{
+  "manifestVersion": 1,
+  "apiVersion": 1,
+  "minCoreVersion": "1.0.0",
+  "id": "broken-demo",
+  "title": "Сломанный модуль (для проверки ошибок)",
+  "shortDescription": "Технический модуль с намеренно битым уроком: показывает, как ядро сообщает об ошибках формата.",
+  "author": "Ядро приложения",
+  "license": "MIT",
+  "ageRange": { "from": 3, "to": 6 },
+  "discipline": "demo",
+  "lessons": [
+    { "file": "lessons/bad.json", "order": 1 }
+  ]
+}

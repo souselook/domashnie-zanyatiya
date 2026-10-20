@@ -1,0 +1,39 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Тёплая светлая тема, крупный шрифт по умолчанию — дружелюбно к ребёнку. */
+:root { font-size: 18px; }
+html[data-font='large'] { font-size: 21px; }
+html[data-font='xlarge'] { font-size: 24px; }
+
+body {
+  @apply bg-cream text-cocoa font-sans antialiased;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-bold
+         transition focus-visible:outline focus-visible:outline-4 focus-visible:outline-offset-2
+         focus-visible:outline-amber1 disabled:opacity-40 disabled:cursor-not-allowed;
+}
+.btn-primary { @apply btn bg-amber1 text-white hover:brightness-95 min-h-[56px]; }
+.btn-secondary { @apply btn bg-sand text-cocoa hover:brightness-95 min-h-[56px]; }
+.btn-danger { @apply btn bg-red-100 text-red-800 hover:bg-red-200; }
+
+.card { @apply rounded-3xl bg-white shadow-sm border border-sand p-5; }
+
+.task-option {
+  @apply card flex flex-col items-center justify-center gap-2 cursor-pointer select-none
+         hover:border-amber1 min-h-[120px] text-lg font-bold;
+}
+.task-option[aria-pressed='true'] { @apply border-4 border-amber1 bg-amber-50; }
+
+.step-dots { @apply flex gap-1.5 items-center; }
+.step-dot { @apply w-3 h-3 rounded-full bg-sand; }
+.step-dot-done { @apply bg-leaf; }
+.step-dot-current { @apply bg-amber1 ring-2 ring-amber1/30; }
+
+.parent-script {
+  @apply rounded-2xl bg-amber-50 border-l-4 border-amber1 p-4 text-base leading-relaxed;
+}
+.parent-script.highlight { @apply ring-4 ring-amber1/40; }
