@@ -71,6 +71,19 @@ async function openLesson(page: import('@playwright/test').Page, name: RegExp) {
   await expect(page.getByTestId('step-indicator')).toBeVisible({ timeout: 15_000 });
   // старт строго с шага 1 — если нет, гонка прогресса вернулась
   await expect(page.getByTestId('step-indicator')).toHaveText(/1 \/ \d+/);
+
+  // v1.1.1 (drag.spec): шаг s1 урока — instruction («Ознакомьтесь с зонами
+  // вместе»), интерактив picture-choice начинается со шага s2. Проходим
+  // вводный шаг явными кликами «Дальше» (nextBlocked=false для instruction),
+  // пока не появится drop-зона или варианты — иначе drag-тесты висят на s1.
+  for (let i = 0; i < 8 && !(await hasInteractive(page)); i++) {
+    await advanceToNextStep(page);
+  }
+}
+
+async function hasInteractive(page: import('@playwright/test').Page): Promise<boolean> {
+  return (await page.getByTestId('drop-zone').count()) > 0 ||
+         (await page.locator('.task-option').count()) > 0;
 }
 
 // Точечная чистка store progress в IndexedDB + зеркало hl.progress.v1

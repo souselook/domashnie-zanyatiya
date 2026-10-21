@@ -11,7 +11,7 @@ export type PlayerEvent =
   | { type: 'PAUSE' }
   | { type: 'RESUME' }
   | { type: 'FINISH' }            // последний шаг → done
-  | { type: 'RESET'; index: number } // восстановить шаг из прогресса (один раз при загрузке)
+  | { type: 'RESET'; index: number; stepCount?: number } // восстановить шаг/число шагов (при загрузке урока)
   | { type: 'QUIT'; index?: number };             // выйти в экран урока
 
 export interface PlayerCtx {
@@ -49,8 +49,11 @@ export function transition(ctx: PlayerCtx, ev: PlayerEvent): PlayerCtx {
     case 'FINISH':
       return { ...ctx, state: 'done' };
     case 'RESET': {
-      const idx = Math.min(Math.max(0, ev.index), last);
-      return { ...ctx, state: 'running', stepIndex: idx };
+      // hotfix v1.1.1: шаг И число шагов перестраиваются атомарно —
+      // автомат перезапускается при смене ключа урока (см. usePlayer).
+      const count = ev.stepCount !== undefined ? Math.max(1, ev.stepCount) : ctx.stepCount;
+      const idx = Math.min(Math.max(0, ev.index), count - 1);
+      return { state: 'running', stepIndex: idx, stepCount: count };
     }
     case 'QUIT':
       return { ...ctx, state: 'intro', stepIndex: typeof ev.index === 'number' ? Math.min(Math.max(0, ev.index), last) : ctx.stepIndex };

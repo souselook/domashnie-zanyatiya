@@ -48,6 +48,7 @@ for (const file of LESSONS) {
       const req = indexedDB.deleteDatabase('home-lessons');
       await new Promise((res) => { req.onsuccess = res; req.onerror = res; req.onblocked = res; });
     });
+    await page.reload(); // bootstrap: hydrateProgressCache() перечитает чистый IDB в зеркало hl.progress.v1
     await page.goto('/#/');
     await uploadZip(page);
 
@@ -75,10 +76,15 @@ for (const file of LESSONS) {
       const next = page.getByRole('button', { name: /дальше|готово|продолжить|завершить/i }).first();
       if (!(await next.isVisible().catch(() => false))) break;
       if (!(await next.isEnabled().catch(() => false))) {
-        // шаг с чекбоксом-заданиями: отметить все чекбоксы и повторить
+        // picture-choice: выбрать вариант (работает в обоих режимах tap/drag)
+        const opt = page.getByRole('group', { name: 'Варианты ответа' }).getByRole('button').first();
+        if (await opt.isVisible().catch(() => false)) await opt.click().catch(() => {});
+        // шаг с чекбоксом-заданиями: отметить все чекбоксы и подтвердить
         const boxes = page.locator('input[type="checkbox"]');
         const n = await boxes.count();
         for (let k = 0; k < n; k++) await boxes.nth(k).check({ force: true }).catch(() => {});
+        const confirm = page.getByRole('button', { name: /подтверждаю/i });
+        if (await confirm.isVisible().catch(() => false)) await confirm.click().catch(() => {});
         if (!(await next.isEnabled().catch(() => false))) break;
       }
       await next.click();

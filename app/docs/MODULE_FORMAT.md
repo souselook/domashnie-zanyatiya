@@ -85,6 +85,11 @@ Cyrillic в symbol-id разрешён (`letters/cyrillic-upper#letter-А`).
   `offline-task`, `reflection`. Неизвестный тип → понятная ошибка рендера, не падение.
 - Ровно одна `reflection`, она последняя (и в уроке, и в модуле последней идёт рефлексия месяца).
 - Каждый шаг: `mode: child|parent`, `parentScript` обязателен.
+- `picture-choice` (v1.1.1, additive): необязательное поле `interaction: 'tap' | 'drag'`
+  (default `'tap'`). `'drag'` рендерит drop-зону (`data-testid="drop-zone"`): вариант
+  перетаскивается pointerdown→pointerup в зоне; tap-to-select остаётся fallback
+  (клик/Enter по вариантам или зоне). Старые ядра поле игнорируют (strip unknown fields),
+  новые читают — обратная совместимость с v1.0 сохраняется.
 
 ## Валидация при загрузке (parseModuleZip → loadZipModule)
 

@@ -65,13 +65,13 @@ export default function ModulePage() {
       <ul className="space-y-3 list-none p-0">
         {progressDots.map((s) => (
           <li key={s.file}>
-            <div className="card flex items-center gap-3">
+            <div className="card flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
               <span className="w-9 h-9 grid place-items-center rounded-full bg-sand font-extrabold shrink-0">{s.order}</span>
               <div className="flex-1 min-w-0">
                 <p className="font-bold truncate">{rec.lessons[s.file]?.title ?? s.lessonId}</p>
-                <p className="text-xs opacity-60">Файл: {s.file}{s.stepsDone > 0 ? ` · пройдено шагов: ${s.stepsDone}` : ''}</p>
+                <p className="text-xs opacity-60 break-all">Файл: {s.file}{s.stepsDone > 0 ? ` · пройдено шагов: ${s.stepsDone}` : ''}</p>
               </div>
-              <div className="flex gap-2 shrink-0">
+              <div className="flex flex-col sm:flex-row gap-2 sm:shrink-0">
                 <Link to={`/module/${manifest.id}/preview/${encodeURIComponent(s.file)}`}
                       className="btn-secondary !min-h-[44px] !py-2 text-sm" title="Предпросмотр без запуска занятия">
                   👁 Предпросмотр

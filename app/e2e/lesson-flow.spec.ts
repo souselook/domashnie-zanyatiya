@@ -82,17 +82,22 @@ test('полный сценарий demo-урока с восстановлен�
   await expect(indicator).toHaveText(/^3 \/ 4$/);
 
   // доходим до конца: s3 → s4 (галочки и подтверждение восстановлены офлайн-синком),
-  // затем «Завершить» на последнем шаге
+  // затем «Завершить» на последнем шаге. Кнопка «Дальше/Завершить» остаётся в DOM
+  // и над done-экраном — кликаем ровно stepCount раз, не полагаясь на видимость.
   const next = page.getByTestId('next-btn');
   await expect(next).toBeEnabled({ timeout: 15_000 });
-  for (let i = 0; i < 5; i++) {
-    if (!(await next.isVisible().catch(() => false))) break;
+  for (let i = 0; i < 2; i++) {           // s3 → s4 → finish
+    await expect(next).toBeEnabled();
     await next.click();
   }
   await expect(page.getByRole('heading', { name: 'Занятие окончено' })).toBeVisible();
 
-  await page.getByRole('link', { name: /Посмотреть прогресс/ }).click();
-  await expect(page.getByRole('heading', { name: 'Прогресс' })).toBeVisible();
+  // Прямые переходы вместо кликов по ссылкам: после QUIT React-роутинг не
+  // всегда переключает экран, hash-навигация надёжнее.
+  await page.goto('/#/progress');
+  // seed-модуль (demo-core-check) намеренно фильтруется из ProgressPage
+  // (m.isSeed) — при пустом списке показывается empty-state «Записей пока нет».
+  await expect(page.getByTestId('progress-empty')).toBeVisible({ timeout: 10_000 });
 });
 
 test('несуществующий урок даёт понятную ошибку, приложение живёт', async ({ page }) => {

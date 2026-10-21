@@ -1,4 +1,4 @@
-# СОСТОЯНИЕ ПРОЕКТА «Домашние занятия» (обновлено: Этап 5.4, 2026-10-20)
+# СОСТОЯНИЕ ПРОЕКТА «Домашние занятия» (обновлено: v1.1.1, 2026-10-22)
 
 ## Статус
 - **v1.0 ВЫПУЩЕН** (тег v1.0, дата 2026-10-20, коммит см. `git log -1`). Документ передачи: docs/RELEASE_v1.0.md.
@@ -13,6 +13,16 @@
 - 5.2 ✅ экран прогресса (12 уроков, статусы не начат/в процессе/пройден, пустое состояние, data-testid) + базовый адаптив 375/768/1280 без горизонтального скролла.
 - 5.3 ✅ PWA-финал: base './', manifest start_url/scope относительные, иконки 192/512 (заглушки ⚠️), zip+m01 в precache, offline.spec.ts зелёный, OSP-инструкция в README.
 - 5.4 ✅ финал: приёмка по чек-листу раздела 12, docs/RELEASE_v1.0.md, тег v1.0. Все правки 5.1–5.3 (unstaged из-за потери хэшей 9b9a8f2/c5d6a15/8622d9e/29d7c6f) влиты финальным релизным коммитом.
+
+## Changelog v1.1.1 (2026-10-22)
+- **Schema (additive)**: `pictureChoice.interaction: 'tap'|'drag'` (default 'tap') — drag-and-drop для picture-choice, полная обратная совместимость v1.0.
+- **TaskRenderer**: drag-режим (drop-zone, pointerdown=намерение, pointerup=выбор) + tap-fallback, a11y-метки, live-регион.
+- **usePlayer hotfix (RESET.stepCount)**: сброс stepCount при RESET урока; редьюсер пересоздаётся по ключу модуль/урок (machine-key) — устранён баг «Занятие окончено» при маунте (застывший stepCount=1 из-за lazy-init при async-загрузке урока); счётчик движений вместо булева флага — запоздалые снимки прогресса не делают RESET/QUIT.
+- **PlayerPage**: синхронное чтение прогресса из зеркала hl.progress.v1 + предзапись setLastStep перед dispatch NEXT (гонка startStep закрыта).
+- **E2E-фиксы спеков** (тестовая изоляция, не продакшн): reload после cleanup (m01-zip/visual-smoke/drag), матчер вариантов через getByRole('group','Варианты ответа') (работает в tap и drag), hydration-wait на интро-странице, lesson-flow через next-btn + прямой goto('/#/progress'), ModulePage адаптив @375 (flex-col ниже sm — убран горизонтальный скролл 53px).
+- **Regression-test**: usePlayer.regression.test.tsx — защита от регрессии «stepCount=1» (бывш. диагностический зонд).
+- Демо: scripts/build-demo-drag.ts + examples/demo-drag.zip (2 урока: drag + tap-compat).
+- Проверки: tsc 0; unit 121/121 (вкл. regression-тест); e2e --workers=1 27/27; build успех, precache 32 entries (~348 KiB).
 
 ## Очередь v1.1
 /dev/* страницы + additive-тесты до ~125 + тяжёлая a11y + дизайнерские иконки + второй трек (9 модулей 5–6 лет).
